@@ -8,7 +8,6 @@ const app = express();
 const port = Number(process.env.PORT) || 3000;
 const dataPath = path.join(__dirname, 'data.json');
 
-app.use(express.json());
 app.use(express.static(__dirname));
 
 async function readStore() {
@@ -18,6 +17,14 @@ async function readStore() {
 async function writeStore(store) {
   store.cart.updatedAt = new Date().toISOString();
   await fs.writeFile(dataPath, `${JSON.stringify(store, null, 2)}\n`, 'utf8');
+}
+
+async function getRazorpayIntegration() {
+  const store = await readStore();
+  return {
+    ...(store.integrations?.razorpay || {}),
+    webhookUrl: process.env.RAZORPAY_WEBHOOK_URL || store.integrations?.razorpay?.webhookUrl || null
+  };
 }
 
 function buildCart(store) {
@@ -108,6 +115,22 @@ app.get('/api/products', async (_request, response) => {
   const catalog = [...store.products, ...buildCategories(store).flatMap((category) => category.products)];
   response.json(query ? catalog.filter((product) => `${product.name} ${product.description}`.toLowerCase().includes(query)) : catalog);
 });
+
+app.get('/api/integrations/razorpay', async (_request, response) => {
+  response.json(await getRazorpayIntegration());
+});
+
+app.post('/api/razorpay/webhook', express.raw({ type: 'application/json' }), async (request, response) => {
+  const signature = request.get('x-razorpay-signature');
+  const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+  if (secret && signature) {
+    const expected = crypto.createHmac('sha256', secret).update(request.body).digest('hex');
+    if (signature !== expected) return response.status(401).json({ error: 'Invalid webhook signature' });
+  }
+  response.json({ received: true });
+});
+
+app.use(express.json());
 
 app.get('/api/products/:id', async (request, response) => {
   const store = await readStore();

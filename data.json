@@ -73,6 +73,12 @@
       "reviews": 76
     }
   ],
+  "integrations": {
+    "razorpay": {
+      "webhookUrl": "https://lightblue-cassowary-624512.hostingersite.com/api/razorpay/webhook",
+      "enabled": true
+    }
+  },
   "cart": {
     "items": [
       {
