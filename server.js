@@ -204,12 +204,15 @@ app.post('/api/orders', async (request, response) => {
   if (!cart.items.length) return response.status(400).json({ error: 'Your cart is empty' });
   const customer = request.body?.customer || {};
   if (!customer.name || !customer.phone || !customer.address) return response.status(400).json({ error: 'Name, phone and address are required' });
+  const paymentMethod = String(request.body?.paymentMethod || 'cod');
+  if (!['cod', 'upi', 'card', 'netbanking'].includes(paymentMethod)) return response.status(400).json({ error: 'Choose a valid payment method' });
 
   const order = {
     id: `BND-${crypto.randomBytes(3).toString('hex').toUpperCase()}`,
     createdAt: new Date().toISOString(),
     status: 'confirmed',
     customer: { name: customer.name, phone: customer.phone, address: customer.address },
+    paymentMethod,
     items: cart.items.map(({ product, quantity, lineTotal }) => ({ productId: product.id, name: product.name, quantity, lineTotal })),
     total: cart.total
   };
