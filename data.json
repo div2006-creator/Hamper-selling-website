@@ -1,0 +1,86 @@
+{
+  "products": [
+    {
+      "id": "royal-heritage",
+      "name": "Royal Heritage Celebration Hamper",
+      "shortName": "Royal Heritage Celebration",
+      "tag": "Signature Box",
+      "price": 1899,
+      "mrp": 2499,
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuB96gGuSJ4VRBfuHniiaWrbaw2qyQFXTvd7cm9fjLd5aOzW2iRiy8_2MKkB075fcEphqBa6NCh5_kaUKfNaSuqPsjPxb2WpZ_gChiec3Kdq0BTAGMOemnai41hsnSqN7Kj32QV18nvvututlWrRTc9GgzO4ZqURINdcka-YOkrZwcdQZMFD5BfUYyersFZyJfme0LmLqUAXJhYSQ09hTS3UY06XQpyEgZlhEj1ZjrHIH9e-CCJW6U7hKQ",
+      "description": "Saffron threads, salted dry fruits, artisanal dark chocolates and a carved brass diya.",
+      "rating": 4.9,
+      "reviews": 342
+    },
+    {
+      "id": "chai-sweets",
+      "name": "Artisanal Chai & Sweets Box",
+      "shortName": "Artisanal Chai & Sweets",
+      "tag": "Eco-Luxe",
+      "price": 999,
+      "mrp": 1299,
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuCv99V82mbTkLCy_VYd6NxPxQ5kvPV3ckqvY6NRMfdOdoEXok6F0NtfZN_76HtgHFWSW4YAMqjZoIGlWXt_lGFci4gL1BuzvcfJucXy_7NhU_MN58Xo8iRtWskA7KvLwiOMJbLukB5FeEHh_Om18fC6qT8lxoR-c-kr49_EVc_hRTfjVzd-ychpySK41Sx0bHBBM-IP7eDSHfegeXuTBvhMg6Vgvw8GFALqfgHtYjct6aJLzzmM_witeg",
+      "description": "Single-estate tea, roasted almonds, pistachio bites and a brass spoon.",
+      "rating": 4.8,
+      "reviews": 215
+    },
+    {
+      "id": "corporate-curated",
+      "name": "Corporate Curated Box",
+      "shortName": "Corporate Curated Box",
+      "tag": "Trending",
+      "price": 1499,
+      "mrp": 1899,
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuBu3BWXfYxlaMPRQUu9j_hJdLAQrRubq6nxZTHgu2EPqZa3p566u9VkrFORuxItRWHMXnJ-NEBCOa0Tyw0Vu-Vmv7izkfiRTWjUu2QLe9Swi02sw0odD_dLuFw-CMd-vUBeZ564myuoFVL5aQeQHTi93tiE-rlQ7amB8GXHIVrbI9sQp_nxdtCjpPwPswbo86tVuuzkZ9r4rOhNUm34w7Er84KRLZxJOKH7-zL5TIF3hcminKZ5fdV1aA",
+      "description": "Premium coffee, pistachios, chocolate bark and a handcrafted brass keepsake.",
+      "rating": 4.9,
+      "reviews": 128
+    },
+    {
+      "id": "festival-light",
+      "name": "Festival Light Hamper",
+      "shortName": "Festival Light Hamper",
+      "tag": "Festive",
+      "price": 1299,
+      "mrp": 1599,
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuC9nA932W3v2MtrjjEohxGyxQ1hhwINjFdYEaCB7lacKesmKaNvMoIDJNyDq5FaBI7k0IeXxKNrlW8Ig-p8LjtEmmV_SOdAiX5R3afKGlVvCOwc_DfKcDbMXC-Ee-fb2JrXm-ELclPgupUhbrbaUxY4TU7KRS79D3RBbtQTtfI4LSUE74TxoT7oHYCs9ca4UV0yHg-kwSiP2k-Vkmdsw8IO7hO0X42InVkPFYSh6D44hwRnL6lim3AvOA",
+      "description": "Saffron sweets, brass diya, rose tea and a keepsake greeting card.",
+      "rating": 4.7,
+      "reviews": 86
+    },
+    {
+      "id": "celebration-edit",
+      "name": "The Celebration Edit",
+      "shortName": "The Celebration Edit",
+      "tag": "New",
+      "price": 1699,
+      "mrp": 2099,
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuC_pEBSWWKB5RFuEFe_8t6ZTVKTUcH59B67UkpmBByhKP2ACVzJBcbMC00JsK4Tya7bSi-dRg9VfmW6mOwVDpaZTHs1J2-q0e5_wxd8aWqh5NesjU66LThdzMRNoPqxNmD718EsWY9eOIApvNl3arxxLMwtPRlfnfiO7hNCL0Kj-X3XpscG7yNwP6y9IRrzbsdJ9IMEVtFTa7fYFBbkEUW7MGcAgOwdMjvn5yf8nfdLPyj6K1zEbS3fRA",
+      "description": "Dark chocolate bark, spiced cashews, candlelight and a silk ribbon.",
+      "rating": 4.8,
+      "reviews": 94
+    },
+    {
+      "id": "self-care-ritual",
+      "name": "Self-Care Ritual Box",
+      "shortName": "Self-Care Ritual Box",
+      "tag": "For Her",
+      "price": 1149,
+      "mrp": 1399,
+      "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuA1blANw3pSvlKkdTMF-JCCxiw1KXnyiF20ytVeQc1NuKs8CXR9t0TQSTdlUhYBb3AQvTDQk25y36Rz4IpnBtmAHPO7QJh8HFX3yDiNRfqmMn3B_X9bpKmB_uuGtqxFeMtDgSS1UasDJk-AmgQTFfopI8kaAeBQRm2xhxvoO6fGKYE_wyzVfjeQASGqSYCJ6FSdUPDIOBE5oiFKxWhgecAhkgiip6rJxZjCGxZyZp7yF75caGFx-8FgHQ",
+      "description": "Scented soy candle, organic tea, nourishing treats and a handwritten note.",
+      "rating": 4.8,
+      "reviews": 76
+    }
+  ],
+  "cart": {
+    "items": [
+      {
+        "productId": "festival-light",
+        "quantity": 1
+      }
+    ],
+    "updatedAt": "2026-09-05T14:56:53.903Z"
+  },
+  "orders": []
+}
