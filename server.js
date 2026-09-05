@@ -20,8 +20,9 @@ async function writeStore(store) {
 }
 
 function buildCart(store) {
+  const catalog = [...store.products, ...buildCategories(store).flatMap((category) => category.products)];
   const items = store.cart.items.map((item) => {
-    const product = store.products.find((entry) => entry.id === item.productId);
+    const product = catalog.find((entry) => entry.id === item.productId);
     return product ? { ...item, product, lineTotal: product.price * item.quantity } : null;
   }).filter(Boolean);
   return {
@@ -33,17 +34,53 @@ function buildCart(store) {
   };
 }
 
+const categoryNames = ['Birthday', 'Anniversary', 'Wedding', 'Festivals', 'Corporate Gifting', 'For Her', 'For Him'];
+const categoryTemplates = [
+  ['Signature Treats Box', 'Celebration snacks, artisan chocolate and a handwritten card.', 899],
+  ['Curated Comfort Hamper', 'Small-batch delicacies, fragrant tea and a keepsake detail.', 1199],
+  ['Golden Hour Gift Set', 'Premium dry fruits, a brass accent and a warm candle.', 1499],
+  ['Maker\'s Table Collection', 'Independent-maker favourites presented in a reusable box.', 1699],
+  ['Grand Gesture Hamper', 'A generous edit of gourmet treats and lasting keepsakes.', 2199]
+];
+
+function buildCategories(store) {
+  const sourceImages = store.products.map((product) => product.image);
+  return categoryNames.map((name, categoryIndex) => ({
+    id: name.toLowerCase().replaceAll(' ', '-'),
+    name,
+    products: categoryTemplates.map(([label, description, price], productIndex) => ({
+      id: `${name.toLowerCase().replaceAll(' ', '-')}-${productIndex + 1}`,
+      name: `${name} ${label}`,
+      shortName: `${name} ${label}`,
+      tag: productIndex === 0 ? 'Popular' : productIndex === 4 ? 'Signature' : 'Curated',
+      price: price + categoryIndex * 50,
+      mrp: price + categoryIndex * 50 + 300,
+      image: sourceImages[(categoryIndex + productIndex) % sourceImages.length],
+      description,
+      rating: 4.7 + ((categoryIndex + productIndex) % 3) / 10,
+      reviews: 48 + categoryIndex * 11 + productIndex * 7,
+      category: name
+    }))
+  }));
+}
+
 app.get('/api/products', async (_request, response) => {
   const store = await readStore();
   const query = String(_request.query.search || '').trim().toLowerCase();
-  response.json(query ? store.products.filter((product) => `${product.name} ${product.description}`.toLowerCase().includes(query)) : store.products);
+  const catalog = [...store.products, ...buildCategories(store).flatMap((category) => category.products)];
+  response.json(query ? catalog.filter((product) => `${product.name} ${product.description}`.toLowerCase().includes(query)) : catalog);
 });
 
 app.get('/api/products/:id', async (request, response) => {
   const store = await readStore();
-  const product = store.products.find((entry) => entry.id === request.params.id);
+  const product = [...store.products, ...buildCategories(store).flatMap((category) => category.products)].find((entry) => entry.id === request.params.id);
   if (!product) return response.status(404).json({ error: 'Product not found' });
   response.json(product);
+});
+
+app.get('/api/categories', async (_request, response) => {
+  const store = await readStore();
+  response.json(buildCategories(store));
 });
 
 app.get('/api/cart', async (_request, response) => {
@@ -58,7 +95,7 @@ app.get('/api/favorites', async (_request, response) => {
 
 app.post('/api/favorites/:productId', async (request, response) => {
   const store = await readStore();
-  const product = store.products.find((entry) => entry.id === request.params.productId);
+  const product = [...store.products, ...buildCategories(store).flatMap((category) => category.products)].find((entry) => entry.id === request.params.productId);
   if (!product) return response.status(404).json({ error: 'Product not found' });
   store.favorites = store.favorites || [];
   const index = store.favorites.indexOf(product.id);
@@ -86,7 +123,7 @@ app.post('/api/cart/items', async (request, response) => {
   const { productId, quantity = 1 } = request.body || {};
   const amount = Number(quantity);
   const store = await readStore();
-  const product = store.products.find((entry) => entry.id === productId);
+  const product = [...store.products, ...buildCategories(store).flatMap((category) => category.products)].find((entry) => entry.id === productId);
   if (!product) return response.status(404).json({ error: 'Product not found' });
   if (!Number.isInteger(amount) || amount < 1 || amount > 99) return response.status(400).json({ error: 'Quantity must be an integer between 1 and 99' });
 

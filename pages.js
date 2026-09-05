@@ -34,6 +34,7 @@ const occasionCards = [
 ];
 
 const productCard = ([name, tag, image, price, description]) => `<article class="product-card page-product-card" data-name="${name.toLowerCase()}"><div class="product-image"><img src="${image}" alt="${name}" /><span class="product-tag">${tag}</span><button class="favorite" data-product-name="${name}" aria-label="Save ${name}"><span class="material-symbols-outlined">favorite</span></button></div><div class="product-info"><div class="rating"><span class="material-symbols-outlined">star</span> 4.9 <small>(342 reviews)</small></div><h3><a href="pages.html?view=product">${name}</a></h3><p>${description}</p><div class="price-row"><strong>${price}</strong><del>₹2,499</del><span>24% OFF</span></div><small class="saving">Free Express Shipping • Gift-ready packaging</small><button class="add-button" data-product="${name}"><span class="material-symbols-outlined">shopping_bag</span> Add to Cart</button></div></article>`;
+const productCardFromObject = (product) => `<article class="product-card page-product-card" data-name="${product.name.toLowerCase()}"><div class="product-image"><img src="${product.image}" alt="${product.name}" /><span class="product-tag">${product.tag}</span><button class="favorite" data-product-id="${product.id}" aria-label="Save ${product.name}"><span class="material-symbols-outlined">favorite</span></button></div><div class="product-info"><div class="rating"><span class="material-symbols-outlined">star</span> ${product.rating} <small>(${product.reviews} reviews)</small></div><h3><a href="pages.html?view=product&amp;product=${product.id}">${product.name}</a></h3><p>${product.description}</p><div class="price-row"><strong>₹${product.price.toLocaleString('en-IN')}</strong><del>₹${product.mrp.toLocaleString('en-IN')}</del><span>CURATED</span></div><small class="saving">Free Express Shipping • Gift-ready packaging</small><button class="add-button" data-product-id="${product.id}" data-product="${product.name}"><span class="material-symbols-outlined">shopping_bag</span> Add to Cart</button></div></article>`;
 const sectionHeader = (eyebrow, title, copy = '') => `<div class="page-title"><p class="eyebrow">${eyebrow}</p><h1>${title}</h1>${copy ? `<p>${copy}</p>` : ''}</div>`;
 const pageExtras = {
   hampers: `<section class="page-width trust-band"><div><span class="material-symbols-outlined">verified</span><strong>Authentic Artisanal Gifting</strong><p>Every hamper is checked, wrapped and dispatched from our Mumbai studio.</p></div><div><span class="material-symbols-outlined">local_shipping</span><strong>One-Day Pan Mumbai</strong><p>Order today and receive your surprise tomorrow evening.</p></div><div><span class="material-symbols-outlined">redeem</span><strong>Gift-Ready Always</strong><p>Premium keepsake boxes, handwritten notes and beautiful ribbons.</p></div></section><section class="page-width editorial-rail"><div><p class="eyebrow">The Bandhan Edit</p><h2>Small details. Big feelings.</h2><p>Our collections pair familiar comforts with one unexpected keepsake, so the unboxing feels as considered as the gesture itself.</p></div><img src="${images.wedding}" alt="Artisanal celebration hamper" /></section>`,
@@ -63,7 +64,7 @@ function render(view) {
     content.innerHTML = `<section class="page-width inner-page">${sectionHeader('Verified Best Loved', 'Explore Curated Gift Hampers', 'Thoughtful boxes for every milestone, assembled with artisanal treats and keepsakes.') }<div class="filter-row"><span>Showing 12 signature hampers</span><button class="button button-light">Filter by Occasion <span class="material-symbols-outlined">tune</span></button></div><div class="product-grid page-product-grid">${products.map(productCard).join('')}</div></section>`;
   } else if (view === 'categories' || view === 'occasions') {
     const title = view === 'categories' ? 'Categories & Shop by Occasion' : 'Shop by Occasion';
-    content.innerHTML = `<section class="page-width inner-page">${sectionHeader('Curated For Moments', title, 'Every celebration has its own cadence. Find thematic gift boxes intentionally crafted for life\'s warmest milestones.') }<div class="large-occasion-grid">${occasionCards.map(([name, copy, image], index) => `<a class="large-occasion-card" href="pages.html?view=hampers"><div class="large-occasion-image"><img src="${image}" alt="${name} gifts" /><span>${index === 0 || index === 3 ? 'Popular' : 'Explore'}</span></div><div><h2>${name}</h2><p>${copy}</p><span class="text-link">Discover <span class="material-symbols-outlined">arrow_forward</span></span></div></a>`).join('')}</div></section>`;
+    content.innerHTML = `<section class="page-width inner-page">${sectionHeader('Curated For Moments', title, 'Every celebration has its own cadence. Find thematic gift boxes intentionally crafted for life\'s warmest milestones.') }<div class="large-occasion-grid">${occasionCards.map(([name, copy, image], index) => `<a class="large-occasion-card" href="#category-${name.toLowerCase().replaceAll(' ', '-')}"><div class="large-occasion-image"><img src="${image}" alt="${name} gifts" /><span>${index === 0 || index === 3 ? 'Popular' : 'Explore'}</span></div><div><h2>${name}</h2><p>${copy}</p><span class="text-link">Discover <span class="material-symbols-outlined">arrow_forward</span></span></div></a>`).join('')}</div><div id="categoryCatalog" class="category-catalog"><p class="catalog-loading">Loading unique products for every category...</p></div></section>`;
   } else if (view === 'personalise') {
     content.innerHTML = `<section class="page-width inner-page personalise-page">${sectionHeader('Made Meaningful', 'Personalise Your Hamper Studio', 'Turn a beautiful gift into an unforgettable gesture with considered details, handwritten words and your own finishing touch.') }<div class="studio-grid"><div class="studio-preview"><img src="${images.hero}" alt="Personalised hamper preview" /><span class="preview-label">Your hamper preview</span></div><div class="studio-form"><label>Gift message<textarea placeholder="Write a note that feels like you..."></textarea></label><label>Choose a ribbon<select><option>Terracotta Raw Silk</option><option>Forest Green Velvet</option><option>Ivory Cotton</option></select></label><label>Gift occasion<select><option>Anniversary</option><option>Birthday</option><option>Wedding</option><option>Just Because</option></select></label><button class="button button-dark" id="savePersonalisation">Save Your Details <span class="material-symbols-outlined">arrow_forward</span></button></div></div></section>`;
   } else if (view === 'about') {
@@ -78,7 +79,18 @@ function render(view) {
   bindPageActions();
   bindSearch();
   api('/cart').then(updateCartBadge).catch(() => {});
+  if (view === 'categories' || view === 'occasions') hydrateCategoryCatalog();
   if (view === 'cart') hydrateCartPage();
+}
+
+function hydrateCategoryCatalog() {
+  api('/categories').then((categories) => {
+    const catalog = document.querySelector('#categoryCatalog');
+    if (!catalog) return;
+    catalog.innerHTML = categories.map((category) => `<section class="category-product-section" id="category-${category.id}"><div class="category-heading"><div><p class="eyebrow">${category.name}</p><h2>${category.name} Gift Collection</h2></div><span>${category.products.length} unique hampers</span></div><div class="product-grid page-product-grid">${category.products.map(productCardFromObject).join('')}</div></section>`).join('');
+    protectImages(catalog);
+    bindPageActions();
+  }).catch((error) => showToast(error.message));
 }
 
 function renderCartItems(cart) {
@@ -115,11 +127,11 @@ function bindCartActions() {
 function bindPageActions() {
   document.querySelectorAll('.add-button, .add-detail').forEach((button) => button.addEventListener('click', () => {
     const productName = button.dataset.product || 'Royal Heritage Celebration Hamper';
-    const productId = productIdByName[productName] || 'royal-heritage';
+    const productId = button.dataset.productId || productIdByName[productName] || 'royal-heritage';
     api('/cart/items', { method: 'POST', body: JSON.stringify({ productId, quantity: 1 }) }).then((cart) => { updateCartBadge(cart); showToast('Added to your hamper'); }).catch((error) => showToast(error.message));
   }));
   document.querySelectorAll('.favorite').forEach((button) => button.addEventListener('click', () => {
-    const productId = productIdByName[button.dataset.productName] || 'royal-heritage';
+    const productId = button.dataset.productId || productIdByName[button.dataset.productName] || 'royal-heritage';
     api(`/favorites/${productId}`, { method: 'POST' }).then((result) => { button.classList.toggle('is-favorite', result.saved); showToast(result.saved ? 'Saved to your favorites' : 'Removed from your favorites'); }).catch((error) => showToast(error.message));
   }));
   const saveButton = document.querySelector('#savePersonalisation');
