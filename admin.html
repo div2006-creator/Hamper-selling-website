@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Supriszo & Co. | Studio Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <!-- Login Screen Modal -->
+  <div id="loginScreen" class="login-overlay">
+    <div class="login-card">
+      <div class="brand">
+        <span class="brand-mark">S</span>
+        <div>
+          <strong>Supriszo <em>&amp;</em> Co.</strong>
+          <small>STUDIO ADMIN CONSOLE</small>
+        </div>
+      </div>
+      <h2>Storefront Admin Login</h2>
+      <p>Enter your studio administrator credentials to manage products, pricing, orders, and banner settings.</p>
+      <form id="loginForm">
+        <label>
+          <span>Username</span>
+          <input type="text" id="loginUsername" required placeholder="admin" value="admin" />
+        </label>
+        <label>
+          <span>Password</span>
+          <input type="password" id="loginPassword" required placeholder="••••••••" value="admin123" />
+        </label>
+        <button type="submit" class="admin-btn primary-btn">Sign In to Dashboard <span class="material-symbols-outlined">arrow_forward</span></button>
+      </form>
+      <div id="loginError" class="login-error"></div>
+    </div>
+  </div>
+
+  <!-- Admin Main Dashboard -->
+  <div id="adminApp" class="admin-layout" style="display: none;">
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <a class="brand" href="index.html" target="_blank" title="View Customer Website">
+          <span class="brand-mark">S</span>
+          <div>
+            <strong>Supriszo <em>&amp;</em> Co.</strong>
+            <small>ADMIN STUDIO</small>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-tab active" data-tab="dashboard">
+          <span class="material-symbols-outlined">dashboard</span> Dashboard Overview
+        </button>
+        <button class="nav-tab" data-tab="products">
+          <span class="material-symbols-outlined">inventory_2</span> Manage Products
+        </button>
+        <button class="nav-tab" data-tab="categories">
+          <span class="material-symbols-outlined">category</span> Categories &amp; Occasions
+        </button>
+        <button class="nav-tab" data-tab="orders">
+          <span class="material-symbols-outlined">local_shipping</span> Orders &amp; Fulfilment
+        </button>
+        <button class="nav-tab" data-tab="settings">
+          <span class="material-symbols-outlined">settings</span> Store Banners &amp; Settings
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div id="dbStatusBadge" class="db-status">
+          <span class="status-dot"></span> <span id="dbStatusText">Checking DB...</span>
+        </div>
+        <a class="admin-btn secondary-btn view-site-btn" href="index.html" target="_blank">
+          <span class="material-symbols-outlined">open_in_new</span> Customer Site
+        </a>
+        <button id="logoutBtn" class="admin-btn text-btn logout-btn">
+          <span class="material-symbols-outlined">logout</span> Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+      <header class="top-bar">
+        <h1 id="pageTitle">Dashboard Overview</h1>
+        <div class="admin-user-profile">
+          <span class="material-symbols-outlined">account_circle</span>
+          <span id="adminUsernameDisplay">Administrator</span>
+        </div>
+      </header>
+
+      <div class="content-body">
+        <!-- 1. DASHBOARD OVERVIEW TAB -->
+        <section id="tab-dashboard" class="tab-content active">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon revenue"><span class="material-symbols-outlined">payments</span></div>
+              <div class="stat-info">
+                <small>Total Revenue</small>
+                <h3 id="statRevenue">₹0</h3>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon orders"><span class="material-symbols-outlined">shopping_bag</span></div>
+              <div class="stat-info">
+                <small>Total Customer Orders</small>
+                <h3 id="statOrders">0</h3>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon products"><span class="material-symbols-outlined">inventory</span></div>
+              <div class="stat-info">
+                <small>Active Products</small>
+                <h3 id="statProducts">0</h3>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon db"><span class="material-symbols-outlined">database</span></div>
+              <div class="stat-info">
+                <small>Database Engine</small>
+                <h3 id="statEngine">PostgreSQL</h3>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-panels">
+            <div class="admin-card">
+              <div class="card-header">
+                <h2>Recent Customer Orders</h2>
+                <button class="admin-btn secondary-btn small-btn" onclick="switchTab('orders')">View All Orders</button>
+              </div>
+              <div id="recentOrdersList" class="recent-orders-list">
+                <p class="muted">Loading recent orders...</p>
+              </div>
+            </div>
+
+            <div class="admin-card">
+              <div class="card-header">
+                <h2>Quick Store Controls</h2>
+              </div>
+              <div class="quick-controls">
+                <button class="admin-btn primary-btn" onclick="openProductModal()">
+                  <span class="material-symbols-outlined">add</span> Add New Hamper
+                </button>
+                <button class="admin-btn secondary-btn" onclick="switchTab('settings')">
+                  <span class="material-symbols-outlined">campaign</span> Change Banner Message
+                </button>
+                <a class="admin-btn secondary-btn" href="pages.html?view=cart" target="_blank">
+                  <span class="material-symbols-outlined">preview</span> Preview Cart &amp; Checkout
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. PRODUCTS MANAGEMENT TAB -->
+        <section id="tab-products" class="tab-content">
+          <div class="table-toolbar">
+            <div class="search-input-wrap">
+              <span class="material-symbols-outlined">search</span>
+              <input type="search" id="productSearchInput" placeholder="Search products by name, tag, or description..." />
+            </div>
+            <button class="admin-btn primary-btn" onclick="openProductModal()">
+              <span class="material-symbols-outlined">add</span> Add New Hamper
+            </button>
+          </div>
+
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Tag</th>
+                  <th>Price</th>
+                  <th>MRP</th>
+                  <th>Rating</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="productsTableBody">
+                <tr><td colspan="8" class="text-center">Loading product catalog...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 3. CATEGORIES TAB -->
+        <section id="tab-categories" class="tab-content">
+          <div class="admin-card max-w-600">
+            <div class="card-header">
+              <h2>Product Categories</h2>
+            </div>
+            <form id="addCategoryForm" class="inline-form">
+              <input type="text" id="newCategoryName" required placeholder="e.g. Luxury Keepsakes" />
+              <button type="submit" class="admin-btn primary-btn">Add Category</button>
+            </form>
+            <div id="categoriesList" class="categories-list">
+              <p class="muted">Loading categories...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. ORDERS TAB -->
+        <section id="tab-orders" class="tab-content">
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer Details</th>
+                  <th>Items Ordered</th>
+                  <th>Total</th>
+                  <th>Payment</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody">
+                <tr><td colspan="7" class="text-center">Loading customer orders...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 5. STORE SETTINGS TAB -->
+        <section id="tab-settings" class="tab-content">
+          <div class="admin-card max-w-800">
+            <div class="card-header">
+              <h2>Storefront Announcements &amp; Settings</h2>
+            </div>
+            <form id="settingsForm" class="settings-form">
+              <label>
+                <span>Announcement Bar Text (Top Ribbon)</span>
+                <input type="text" id="settingAnnouncement" required placeholder="ONE DAY DELIVERY PAN MUMBAI..." />
+              </label>
+              <label>
+                <span>Delivery Banner Text (Below Header)</span>
+                <input type="text" id="settingBanner" required placeholder="One Day Delivery Pan Mumbai • Pan-India..." />
+              </label>
+              <label>
+                <span>Helpline / WhatsApp Number</span>
+                <input type="text" id="settingPhone" required placeholder="+91 8655239282" />
+              </label>
+              <label>
+                <span>Instagram Handle Link</span>
+                <input type="text" id="settingInstagram" required placeholder="@aaryann_guptaa" />
+              </label>
+              <button type="submit" class="admin-btn primary-btn">
+                <span class="material-symbols-outlined">save</span> Save Storefront Settings
+              </button>
+            </form>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add / Edit Product Modal -->
+  <div id="productModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="modalProductTitle">Add New Gift Hamper</h2>
+        <button class="close-modal" onclick="closeProductModal()">&times;</button>
+      </div>
+      <form id="productForm">
+        <input type="hidden" id="modalProductId" />
+        <div class="form-grid">
+          <label>
+            <span>Product Full Name *</span>
+            <input type="text" id="modalProdName" required placeholder="Royal Heritage Celebration Hamper" />
+          </label>
+          <label>
+            <span>Short Display Name</span>
+            <input type="text" id="modalProdShortName" placeholder="Royal Heritage" />
+          </label>
+          <label>
+            <span>Category</span>
+            <select id="modalProdCategory">
+              <option value="">Select Category</option>
+            </select>
+          </label>
+          <label>
+            <span>Badge / Tag</span>
+            <input type="text" id="modalProdTag" placeholder="Bestseller, Festive, Signature, Value Pick" />
+          </label>
+          <label>
+            <span>Selling Price (₹) *</span>
+            <input type="number" id="modalProdPrice" required min="1" placeholder="1899" />
+          </label>
+          <label>
+            <span>Original MRP Price (₹) *</span>
+            <input type="number" id="modalProdMrp" required min="1" placeholder="2499" />
+          </label>
+          <label class="full-width">
+            <span>Image URL *</span>
+            <input type="url" id="modalProdImage" required placeholder="https://images.unsplash.com/..." />
+          </label>
+          <label class="full-width">
+            <span>Description</span>
+            <textarea id="modalProdDesc" rows="3" placeholder="Handcrafted with brass diya, organic saffron, salted nuts..."></textarea>
+          </label>
+          <label>
+            <span>Initial Rating (1.0 - 5.0)</span>
+            <input type="number" id="modalProdRating" step="0.1" min="1" max="5" value="4.9" />
+          </label>
+          <label>
+            <span>Reviews Count</span>
+            <input type="number" id="modalProdReviews" min="0" value="120" />
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="admin-btn secondary-btn" onclick="closeProductModal()">Cancel</button>
+          <button type="submit" class="admin-btn primary-btn">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="adminToast" class="admin-toast"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
