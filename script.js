@@ -68,7 +68,7 @@ async function loadBestsellers() {
       return `
       <article class="product-card" data-id="${p.id}" data-name="${p.name.toLowerCase()}">
         <div class="product-image">
-          <img src="${p.image}" alt="${p.name}" onerror="this.src='https://lh3.googleusercontent.com/aida-public/AB6AXuCv99V82mbTkLCy_VYd6NxPxQ5kvPV3ckqvY6NRMfdOdoEXok6F0NtfZN_76HtgHFWSW4YAMqjZoIGlWXt_lGFci4gL1BuzvcfJucXy_7NhU_MN58Xo8iRtWskA7KvLwiOMJbLukB5FeEHh_Om18fC6qT8lxoR-c-kr49_EVc_hRTfjVzd-ychpySK41Sx0bHBBM-IP7eDSHfegeXuTBvhMg6Vgvw8GFALqfgHtYjct6aJLzzmM_witeg'" />
+          <img src="${p.image}" alt="${p.name}" onerror="this.src='images/bday-1.jpg'" />
           <span class="product-tag">${p.tag || 'Bestseller'}</span>
           ${isOutOfStock ? '<span class="out-stock-badge">Out of Stock</span>' : ''}
           <button class="favorite ${favSet.has(p.id) ? 'is-favorite' : ''}" data-product-id="${p.id}" aria-label="Add ${p.name} to favorites">

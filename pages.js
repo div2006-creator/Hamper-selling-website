@@ -33,7 +33,7 @@ const productCardFromObject = (product) => {
   const isOutOfStock = (product.stockQuantity !== undefined && product.stockQuantity <= 0);
   return `<article class="product-card page-product-card" data-name="${product.name.toLowerCase()}" data-price="${product.price}" data-rating="${product.rating || 4.8}">
     <div class="product-image">
-      <img src="${product.image}" alt="${product.name}" onerror="this.src='https://lh3.googleusercontent.com/aida-public/AB6AXuCv99V82mbTkLCy_VYd6NxPxQ5kvPV3ckqvY6NRMfdOdoEXok6F0NtfZN_76HtgHFWSW4YAMqjZoIGlWXt_lGFci4gL1BuzvcfJucXy_7NhU_MN58Xo8iRtWskA7KvLwiOMJbLukB5FeEHh_Om18fC6qT8lxoR-c-kr49_EVc_hRTfjVzd-ychpySK41Sx0bHBBM-IP7eDSHfegeXuTBvhMg6Vgvw8GFALqfgHtYjct6aJLzzmM_witeg'" />
+      <img src="${product.image}" alt="${product.name}" onerror="this.src='images/bday-1.jpg'" />
       <span class="product-tag">${product.tag || 'Curated'}</span>
       ${isOutOfStock ? '<span class="out-stock-badge">Out of Stock</span>' : ''}
       <button class="favorite" data-product-id="${product.id}" aria-label="Save ${product.name}"><span class="material-symbols-outlined">favorite</span></button>
@@ -67,7 +67,7 @@ function protectImages(scope = document) {
     image.addEventListener('error', () => {
       if (image.dataset.fallback) return;
       image.dataset.fallback = 'true';
-      image.src = 'https://lh3.googleusercontent.com/aida-public/AB6AXuCv99V82mbTkLCy_VYd6NxPxQ5kvPV3ckqvY6NRMfdOdoEXok6F0NtfZN_76HtgHFWSW4YAMqjZoIGlWXt_lGFci4gL1BuzvcfJucXy_7NhU_MN58Xo8iRtWskA7KvLwiOMJbLukB5FeEHh_Om18fC6qT8lxoR-c-kr49_EVc_hRTfjVzd-ychpySK41Sx0bHBBM-IP7eDSHfegeXuTBvhMg6Vgvw8GFALqfgHtYjct6aJLzzmM_witeg';
+      image.src = 'images/bday-1.jpg';
     });
   });
 }
@@ -166,7 +166,7 @@ function hydrateProductDetailPage(prodId) {
         <div class="pdp-layout">
           <div class="pdp-gallery">
             <div class="main-image-wrap">
-              <img id="pdpMainImg" src="${product.image}" alt="${product.name}" onerror="this.src='https://lh3.googleusercontent.com/aida-public/AB6AXuCv99V82mbTkLCy_VYd6NxPxQ5kvPV3ckqvY6NRMfdOdoEXok6F0NtfZN_76HtgHFWSW4YAMqjZoIGlWXt_lGFci4gL1BuzvcfJucXy_7NhU_MN58Xo8iRtWskA7KvLwiOMJbLukB5FeEHh_Om18fC6qT8lxoR-c-kr49_EVc_hRTfjVzd-ychpySK41Sx0bHBBM-IP7eDSHfegeXuTBvhMg6Vgvw8GFALqfgHtYjct6aJLzzmM_witeg'" />
+              <img id="pdpMainImg" src="${product.image}" alt="${product.name}" onerror="this.src='images/bday-1.jpg'" />
               <span class="product-tag pdp-tag">${product.tag || 'Curated Keepsake'}</span>
             </div>
             <div class="pdp-trust-list">
@@ -627,7 +627,7 @@ function renderCartItems(cart) {
   if (!cart.items.length) return '<div class="empty-cart"><span class="material-symbols-outlined">shopping_bag</span><h2>Your basket is empty.</h2><p>Explore our hampers and add your favorites here.</p><a class="button button-dark" href="pages.html?view=hampers">Explore Hampers</a></div>';
   return cart.items.map(({ product, quantity, lineTotal, personalisation }) => `
     <article class="cart-item" data-product-id="${product.id}">
-      <img src="${product.image}" alt="${product.name}" onerror="this.src='https://lh3.googleusercontent.com/aida-public/AB6AXuCv99V82mbTkLCy_VYd6NxPxQ5kvPV3ckqvY6NRMfdOdoEXok6F0NtfZN_76HtgHFWSW4YAMqjZoIGlWXt_lGFci4gL1BuzvcfJucXy_7NhU_MN58Xo8iRtWskA7KvLwiOMJbLukB5FeEHh_Om18fC6qT8lxoR-c-kr49_EVc_hRTfjVzd-ychpySK41Sx0bHBBM-IP7eDSHfegeXuTBvhMg6Vgvw8GFALqfgHtYjct6aJLzzmM_witeg'" />
+      <img src="${product.image}" alt="${product.name}" onerror="this.src='images/bday-1.jpg'" />
       <div>
         <span class="product-tag">${product.tag || 'Curated'}</span>
         <h2><a href="pages.html?view=product&amp;product=${product.id}">${product.name}</a></h2>
