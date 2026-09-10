@@ -35,7 +35,7 @@
       "tag": "Signature",
       "price": 2199,
       "mrp": 2799,
-      "image": "images/bday_hamper.png",
+      "image": "images/macaron_sweet_hamper.png",
       "description": "Gold-trimmed keepsake box, artisanal macaroons, crystal champagne flutes and scented soy candle.",
       "rating": 4.9,
       "reviews": 142
@@ -48,7 +48,7 @@
       "tag": "Trending",
       "price": 1899,
       "mrp": 2399,
-      "image": "images/coffee_truffle_hamper.png",
+      "image": "images/gourmet_feast_hamper.png",
       "description": "Roasted cashew crunch, hazelnut spread, dark roasts, and a gold foil handwritten greeting card.",
       "rating": 4.7,
       "reviews": 98
@@ -61,7 +61,7 @@
       "tag": "Value Pick",
       "price": 999,
       "mrp": 1299,
-      "image": "images/bday_hamper.png",
+      "image": "images/tea_botanical_hamper.png",
       "description": "Pistachio bites, almond dragees, organic darjeeling tea and a carved brass tea spoon.",
       "rating": 4.8,
       "reviews": 156
@@ -74,7 +74,7 @@
       "tag": "New",
       "price": 1699,
       "mrp": 2199,
-      "image": "images/coffee_truffle_hamper.png",
+      "image": "https://images.unsplash.com/photo-1582293041079-7814c2f12063?auto=format&fit=crop&w=800&q=80",
       "description": "Midnight dark chocolate slabs, scented wax tablets, roasted dry fruit jar and silk ribbon finish.",
       "rating": 4.9,
       "reviews": 88
@@ -100,7 +100,7 @@
       "tag": "Signature",
       "price": 2499,
       "mrp": 3199,
-      "image": "images/wedding_royal_trunk.png",
+      "image": "https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?auto=format&fit=crop&w=800&q=80",
       "description": "Brass photo keepsake frame, gold-leafed saffron infusion, and Mamra almonds in velvet box.",
       "rating": 5,
       "reviews": 175
@@ -113,7 +113,7 @@
       "tag": "Popular",
       "price": 1799,
       "mrp": 2299,
-      "image": "images/anniversary_romance_hamper.png",
+      "image": "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=800&q=80",
       "description": "Artisanal rose tea, spiced dark chocolates, and a hand-carved wooden tray.",
       "rating": 4.8,
       "reviews": 112
@@ -126,7 +126,7 @@
       "tag": "Luxury",
       "price": 2199,
       "mrp": 2799,
-      "image": "images/anniversary_romance_hamper.png",
+      "image": "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=80",
       "description": "Kashmiri saffron, scented soy candle jar, salted pistachios, and brass carved spoon.",
       "rating": 4.9,
       "reviews": 140
@@ -139,7 +139,7 @@
       "tag": "New",
       "price": 1599,
       "mrp": 2099,
-      "image": "images/bday_hamper.png",
+      "image": "https://images.unsplash.com/photo-1512909006721-3d6018887383?auto=format&fit=crop&w=800&q=80",
       "description": "Champagne scented candle, salted cashew jar, and terracotta raw silk gift wrap.",
       "rating": 4.7,
       "reviews": 89
@@ -152,7 +152,7 @@
       "tag": "Grand Edit",
       "price": 2899,
       "mrp": 3699,
-      "image": "images/anniversary_romance_hamper.png",
+      "image": "https://images.unsplash.com/photo-1548848221-0c2e497ed557?auto=format&fit=crop&w=800&q=80",
       "description": "Double-tier woven hamper with gourmet preserves, artisan crackers, and fine brass bell.",
       "rating": 4.9,
       "reviews": 160
@@ -178,7 +178,7 @@
       "tag": "Royal Trunk",
       "price": 3499,
       "mrp": 4299,
-      "image": "images/wedding_royal_trunk.png",
+      "image": "https://images.unsplash.com/photo-1671815629160-40598a2f00a7?auto=format&fit=crop&w=800&q=80",
       "description": "Hand-carved brass bell, Kashmiri saffron, royal mithai bites, and raw silk wrap.",
       "rating": 5,
       "reviews": 280
@@ -191,7 +191,7 @@
       "tag": "Bestseller",
       "price": 2799,
       "mrp": 3499,
-      "image": "images/wedding_royal_trunk.png",
+      "image": "https://images.unsplash.com/photo-1575224300306-1b8da36134ec?auto=format&fit=crop&w=800&q=80",
       "description": "Handcrafted lotus brass diya, Mamra almonds, silver-coated cardamom and velvet gift box.",
       "rating": 4.9,
       "reviews": 195
@@ -204,7 +204,7 @@
       "tag": "Bridal Edit",
       "price": 2299,
       "mrp": 2899,
-      "image": "images/her_spa_hamper.png",
+      "image": "images/wed_bridal_elegance_box.png",
       "description": "Rose-infused bath salts, artisanal almond brittles, and hand-painted greeting card.",
       "rating": 4.8,
       "reviews": 134
@@ -217,7 +217,7 @@
       "tag": "Delight",
       "price": 1999,
       "mrp": 2499,
-      "image": "images/wedding_royal_trunk.png",
+      "image": "https://images.unsplash.com/photo-1661398229744-e38032aa4e05?auto=format&fit=crop&w=800&q=80",
       "description": "Kaju katli squares, saffron peda, roasted pistachios and gold foiled box.",
       "rating": 4.7,
       "reviews": 165
@@ -230,7 +230,7 @@
       "tag": "Grand Edit",
       "price": 2999,
       "mrp": 3799,
-      "image": "images/wedding_royal_trunk.png",
+      "image": "https://images.unsplash.com/photo-1667343251614-9ad053254a3c?auto=format&fit=crop&w=800&q=80",
       "description": "Carved brass idol, silver dry fruit bowls, and premium organic saffron tea.",
       "rating": 5,
       "reviews": 210
@@ -256,7 +256,7 @@
       "tag": "Bestseller",
       "price": 2299,
       "mrp": 2899,
-      "image": "images/festive_diwali_hamper.png",
+      "image": "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=800&q=80",
       "description": "Pair of brass oil lamps, organic marigold tea, roasted nuts and artisan jaggery sweets.",
       "rating": 4.9,
       "reviews": 310
@@ -269,7 +269,7 @@
       "tag": "Rakhi Special",
       "price": 1499,
       "mrp": 1899,
-      "image": "images/festive_diwali_hamper.png",
+      "image": "images/fest_rakhi_keepsake.png",
       "description": "Hand-braided silk Rakhi, choco-coated almonds, and terracotta carved diya.",
       "rating": 4.8,
       "reviews": 178
@@ -282,7 +282,7 @@
       "tag": "Festive Pick",
       "price": 1199,
       "mrp": 1499,
-      "image": "images/festive_diwali_hamper.png",
+      "image": "https://images.unsplash.com/photo-1663928246639-86813155169f?auto=format&fit=crop&w=800&q=80",
       "description": "Salted makhana, dried cranberries, organic green tea and brass temple bell.",
       "rating": 4.7,
       "reviews": 94
@@ -295,7 +295,7 @@
       "tag": "New Year",
       "price": 2099,
       "mrp": 2699,
-      "image": "images/bday_hamper.png",
+      "image": "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=800&q=80",
       "description": "Sparkling grape brew, artisan dark bark, roasted almonds and desk calendar card.",
       "rating": 4.9,
       "reviews": 120
@@ -308,7 +308,7 @@
       "tag": "Trunk Edit",
       "price": 2699,
       "mrp": 3399,
-      "image": "images/wedding_royal_trunk.png",
+      "image": "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=800&q=80",
       "description": "Brass thali accent, saffron peda, Mamra almonds and scented wax diya.",
       "rating": 5,
       "reviews": 240
@@ -334,7 +334,7 @@
       "tag": "Executive",
       "price": 1799,
       "mrp": 2299,
-      "image": "images/corporate_executive_hamper.png",
+      "image": "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=800&q=80",
       "description": "Vegan leather notebook, brass pen, artisanal dark chocolate and cold brew concentrate.",
       "rating": 4.8,
       "reviews": 154
@@ -347,7 +347,7 @@
       "tag": "Bulk Favorite",
       "price": 2499,
       "mrp": 3199,
-      "image": "images/corporate_executive_hamper.png",
+      "image": "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80",
       "description": "Insulated copper tumbler, gourmet nut mix, dark cacao slab and thank you card.",
       "rating": 4.9,
       "reviews": 205
@@ -360,7 +360,7 @@
       "tag": "Eco-Corporate",
       "price": 1199,
       "mrp": 1499,
-      "image": "images/corporate_executive_hamper.png",
+      "image": "https://images.unsplash.com/photo-1601042879364-f3947d3f1a3d?auto=format&fit=crop&w=800&q=80",
       "description": "Himalayan Darjeeling tea, teak coasters, honey jar and wooden stirrer.",
       "rating": 4.7,
       "reviews": 92
@@ -373,7 +373,7 @@
       "tag": "VIP Executive",
       "price": 3299,
       "mrp": 4099,
-      "image": "images/corporate_executive_hamper.png",
+      "image": "https://images.unsplash.com/photo-1552664688-cf412ec27db2?auto=format&fit=crop&w=800&q=80",
       "description": "Leather-bound planner, brass bookmark, single-origin coffee and Mamra almonds.",
       "rating": 5,
       "reviews": 168
@@ -386,7 +386,7 @@
       "tag": "Team Pick",
       "price": 999,
       "mrp": 1299,
-      "image": "images/corporate_executive_hamper.png",
+      "image": "https://images.unsplash.com/photo-1578704694513-08946e996642?auto=format&fit=crop&w=800&q=80",
       "description": "Roasted cashew crunch, dark chocolate bark, and organic green tea bags.",
       "rating": 4.8,
       "reviews": 130
@@ -412,7 +412,7 @@
       "tag": "Pamper Edit",
       "price": 1899,
       "mrp": 2399,
-      "image": "images/her_spa_hamper.png",
+      "image": "https://images.unsplash.com/photo-1608248597263-0057e43a4524?auto=format&fit=crop&w=800&q=80",
       "description": "Organic rose body butter, silk eye mask, rose quartz stone and floral bath tea.",
       "rating": 4.9,
       "reviews": 180
@@ -425,7 +425,7 @@
       "tag": "Floral Pick",
       "price": 1599,
       "mrp": 1999,
-      "image": "images/her_spa_hamper.png",
+      "image": "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
       "description": "Jasmine blossom green tea, lavender soy candle and salted pistachios.",
       "rating": 4.8,
       "reviews": 115
@@ -438,7 +438,7 @@
       "tag": "Luxury Spa",
       "price": 2299,
       "mrp": 2899,
-      "image": "images/her_spa_hamper.png",
+      "image": "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=800&q=80",
       "description": "Hand-poured coconut wax candle, almond body oil, dark cocoa bark and silk scrunchie.",
       "rating": 5,
       "reviews": 210
@@ -451,7 +451,7 @@
       "tag": "Serenity",
       "price": 1399,
       "mrp": 1799,
-      "image": "images/her_spa_hamper.png",
+      "image": "https://images.unsplash.com/photo-1678217678191-4a220ad62319?auto=format&fit=crop&w=800&q=80",
       "description": "Pink salt bath soak, artisan chamomile tea, and white chocolate dragees.",
       "rating": 4.7,
       "reviews": 92
@@ -464,7 +464,7 @@
       "tag": "Grand Basket",
       "price": 2599,
       "mrp": 3299,
-      "image": "images/her_spa_hamper.png",
+      "image": "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=80",
       "description": "Woven storage basket, rose face mist, artisan chocolates and botanical diffuser.",
       "rating": 4.9,
       "reviews": 164
@@ -477,7 +477,7 @@
       "tag": "For Him",
       "price": 1599,
       "mrp": 1999,
-      "image": "images/corporate_executive_hamper.png",
+      "image": "images/grooming_him_hamper.png",
       "description": "Dark roasts, leather coasters, spiced almonds, and a brass key ring.",
       "rating": 4.8,
       "reviews": 64
@@ -490,7 +490,7 @@
       "tag": "Grooming",
       "price": 1899,
       "mrp": 2399,
-      "image": "images/corporate_executive_hamper.png",
+      "image": "https://images.unsplash.com/photo-1621607512214-68297480165e?auto=format&fit=crop&w=800&q=80",
       "description": "Cedarwood beard balm, charcoal face wash, dark chocolate slab and pour-over coffee.",
       "rating": 4.9,
       "reviews": 140
@@ -503,7 +503,7 @@
       "tag": "Smokey Edit",
       "price": 2199,
       "mrp": 2799,
-      "image": "images/corporate_executive_hamper.png",
+      "image": "https://images.unsplash.com/photo-1543294001-f7cd5d7fb516?auto=format&fit=crop&w=800&q=80",
       "description": "Bourbon-infused dark chocolates, smoked cashews and stainless steel flask.",
       "rating": 4.8,
       "reviews": 118
@@ -516,7 +516,7 @@
       "tag": "Maverick",
       "price": 1499,
       "mrp": 1899,
-      "image": "images/corporate_executive_hamper.png",
+      "image": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80",
       "description": "Leather key organizer, cold brew concentrate, salted peanuts and brass bottle opener.",
       "rating": 4.7,
       "reviews": 85
@@ -529,7 +529,7 @@
       "tag": "Urban Edit",
       "price": 1999,
       "mrp": 2499,
-      "image": "images/corporate_executive_hamper.png",
+      "image": "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&w=800&q=80",
       "description": "Matte black coffee tumbler, roasted pistachios, dark cacao bark and leather pouch.",
       "rating": 4.9,
       "reviews": 150
