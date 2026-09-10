@@ -68,7 +68,9 @@ async function loadBestsellers() {
       return `
       <article class="product-card" data-id="${p.id}" data-name="${p.name.toLowerCase()}">
         <div class="product-image">
-          <img src="${p.image}" alt="${p.name}" onerror="this.src='images/bday-1.jpg'" />
+          <a href="pages.html?view=product&amp;product=${p.id}" class="product-img-link" aria-label="View details for ${p.name}">
+            <img src="${p.image}" alt="${p.name}" onerror="this.src='images/bday-1.jpg'" />
+          </a>
           <span class="product-tag">${p.tag || 'Bestseller'}</span>
           ${isOutOfStock ? '<span class="out-stock-badge">Out of Stock</span>' : ''}
           <button class="favorite ${favSet.has(p.id) ? 'is-favorite' : ''}" data-product-id="${p.id}" aria-label="Add ${p.name} to favorites">

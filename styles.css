@@ -156,4 +156,6 @@
 .sticky-bar-text small{color:var(--muted);font-size:11px}
 .sticky-bar-actions{display:flex;align-items:center;gap:14px}
 .sticky-bar-price{font-size:20px;font-weight:700;color:var(--ink)}
-@media(max-width:900px){.aplus-hero-banner{flex-direction:column;align-items:flex-start}.aplus-grid{grid-template-columns:1fr}}
+.product-img-link{display:block;width:100%;height:100%;cursor:pointer}
+.product-img-link img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.product-card:hover .product-img-link img{transform:scale(1.05)}

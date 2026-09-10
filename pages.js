@@ -33,7 +33,9 @@ const productCardFromObject = (product) => {
   const isOutOfStock = (product.stockQuantity !== undefined && product.stockQuantity <= 0);
   return `<article class="product-card page-product-card" data-name="${product.name.toLowerCase()}" data-price="${product.price}" data-rating="${product.rating || 4.8}">
     <div class="product-image">
-      <img src="${product.image}" alt="${product.name}" onerror="this.src='images/bday-1.jpg'" />
+      <a href="pages.html?view=product&amp;product=${product.id}" class="product-img-link" aria-label="View details for ${product.name}">
+        <img src="${product.image}" alt="${product.name}" onerror="this.src='images/bday-1.jpg'" />
+      </a>
       <span class="product-tag">${product.tag || 'Curated'}</span>
       ${isOutOfStock ? '<span class="out-stock-badge">Out of Stock</span>' : ''}
       <button class="favorite" data-product-id="${product.id}" aria-label="Save ${product.name}"><span class="material-symbols-outlined">favorite</span></button>
