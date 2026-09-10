@@ -9,6 +9,11 @@ const port = Number(process.env.PORT) || 3000;
 
 app.use(express.static(__dirname));
 
+// Admin Page Route Alias (/admin -> admin.html)
+app.get(['/admin', '/admin/'], (_req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
 // Rate Limiting & Anti-Spam Middleware
 const requestLogs = new Map();
 function rateLimit(maxRequests = 60, windowMs = 60000) {
