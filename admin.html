@@ -64,6 +64,9 @@
         <button class="nav-tab" data-tab="orders">
           <span class="material-symbols-outlined">local_shipping</span> Orders &amp; Fulfilment
         </button>
+        <button class="nav-tab" data-tab="custom-requests">
+          <span class="material-symbols-outlined">edit_note</span> Custom Requests <b id="pendingCustomBadge" class="nav-badge" style="display:none; background:#a8603d; color:#fff; font-size:9px; border-radius:50%; padding:2px 6px; margin-left:auto;">0</b>
+        </button>
         <button class="nav-tab" data-tab="settings">
           <span class="material-symbols-outlined">settings</span> Store Banners &amp; Settings
         </button>
@@ -257,8 +260,80 @@
             </form>
           </div>
         </section>
+
+        <!-- Custom Requests Tab Section -->
+        <section id="tab-custom-requests" class="tab-content" style="display: none;">
+          <div class="content-header">
+            <div>
+              <h2>Personalised Hamper Requests</h2>
+              <p>Review customer custom hamper requests, accept or reject submissions, and send reply messages.</p>
+            </div>
+            <div class="filter-pills">
+              <button class="pill active" onclick="filterCustomRequests('all')">All Requests</button>
+              <button class="pill" onclick="filterCustomRequests('pending')">Pending Review</button>
+              <button class="pill" onclick="filterCustomRequests('accepted')">Accepted</button>
+              <button class="pill" onclick="filterCustomRequests('rejected')">Rejected</button>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Request Code</th>
+                  <th>Customer Info</th>
+                  <th>Occasion &amp; Budget</th>
+                  <th>Custom Items / Details</th>
+                  <th>Ribbon &amp; Note</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="customRequestsTableBody">
+                <tr><td colspan="7" class="loading-cell">Loading custom hamper requests...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
     </main>
+  </div>
+
+  <!-- Custom Request Response Modal -->
+  <div id="customReqModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="modalReqTitle">Respond to Custom Hamper Request</h2>
+        <button class="close-modal" onclick="closeCustomReqModal()">&times;</button>
+      </div>
+      <form id="customReqResponseForm">
+        <input type="hidden" id="modalReqId" />
+        
+        <div style="background:#fbfaf5; padding:14px; border-radius:6px; border:1px solid #e8e4d8; margin-bottom:16px; font-size:12px;">
+          <p style="margin:0 0 4px;"><strong>Customer:</strong> <span id="modalReqCustomer"></span></p>
+          <p style="margin:0 0 4px;"><strong>Occasion:</strong> <span id="modalReqOccasion"></span> | <strong>Budget:</strong> <span id="modalReqBudget"></span></p>
+          <p style="margin:0;"><strong>Details:</strong> <span id="modalReqDetails"></span></p>
+        </div>
+
+        <label style="display:block; margin-bottom:14px;">
+          <span style="font-weight:600; font-size:12px;">Decision Action</span>
+          <select id="modalReqDecisionSelect" style="width:100%; padding:9px; border:1px solid #ddd; border-radius:4px; font-size:12px; margin-top:4px; font-family:inherit;">
+            <option value="accepted">Accept Request &amp; Send Quote</option>
+            <option value="rejected">Reject Request</option>
+          </select>
+        </label>
+
+        <label style="display:block; margin-bottom:16px;">
+          <span style="font-weight:600; font-size:12px;">Admin Reply / Message to Customer *</span>
+          <textarea id="modalAdminReplyText" required rows="4" placeholder="Enter custom pricing quote, confirmation note, or alternative suggestions..." style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px; font-size:12px; font-family:inherit; margin-top:4px;"></textarea>
+        </label>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+          <button type="button" class="admin-btn secondary-btn" onclick="closeCustomReqModal()">Cancel</button>
+          <button type="submit" class="admin-btn primary-btn"><span class="material-symbols-outlined">send</span> Submit Response</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- Add / Edit Product Modal -->

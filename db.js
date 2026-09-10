@@ -14,6 +14,7 @@ let fallbackStore = {
   favorites: [],
   personalisation: { message: '', ribbon: 'Terracotta Raw Silk', occasion: 'Anniversary' },
   orders: [],
+  customRequests: [],
   settings: {
     announcement_text: 'ONE DAY DELIVERY PAN MUMBAI | Because your love deserves timely surprises.',
     helpline_phone: '+91 8655239282',
@@ -40,6 +41,7 @@ async function loadFallbackData() {
     fallbackStore.cart = parsed.cart || { items: [] };
     fallbackStore.favorites = parsed.favorites || [];
     fallbackStore.orders = parsed.orders || [];
+    fallbackStore.customRequests = parsed.customRequests || [];
     if (parsed.settings) fallbackStore.settings = parsed.settings;
 
     const catMap = new Map();
@@ -621,14 +623,114 @@ async function updateSiteSettings(settingsObj) {
   return getSiteSettings();
 }
 
+// Custom Hamper Requests
+
+async function createCustomRequest(data) {
+  const reqObj = {
+    id: data.id || `custom_req_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+    reqCode: data.reqCode || `REQ-${Math.floor(100000 + Math.random() * 900000)}`,
+    customerName: data.customerName || data.name || 'Valued Guest',
+    customerContact: data.customerContact || data.phone || data.email || 'N/A',
+    occasion: data.occasion || 'General',
+    budget: data.budget || 'Custom',
+    details: data.details || data.instructions || '',
+    ribbon: data.ribbon || 'Terracotta Raw Silk',
+    message: data.message || '',
+    status: 'pending',
+    adminReply: '',
+    createdAt: new Date().toISOString()
+  };
+
+  if (usePostgres) {
+    await pool.query(
+      `INSERT INTO custom_requests (id, req_code, customer_name, customer_contact, occasion, budget, details, ribbon, message, status, admin_reply)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+      [reqObj.id, reqObj.reqCode, reqObj.customerName, reqObj.customerContact, reqObj.occasion, reqObj.budget, reqObj.details, reqObj.ribbon, reqObj.message, reqObj.status, reqObj.adminReply]
+    );
+  } else {
+    fallbackStore.customRequests.unshift(reqObj);
+    await saveFallbackData();
+  }
+
+  return reqObj;
+}
+
+async function getCustomRequests() {
+  if (usePostgres) {
+    const res = await pool.query('SELECT * FROM custom_requests ORDER BY created_at DESC');
+    return res.rows.map(r => ({
+      id: r.id,
+      reqCode: r.req_code,
+      customerName: r.customer_name,
+      customerContact: r.customer_contact,
+      occasion: r.occasion,
+      budget: r.budget,
+      details: r.details,
+      ribbon: r.ribbon,
+      message: r.message,
+      status: r.status,
+      adminReply: r.admin_reply,
+      createdAt: r.created_at
+    }));
+  }
+  return fallbackStore.customRequests || [];
+}
+
+async function getCustomRequestByCode(reqCode) {
+  const cleanCode = String(reqCode).trim().toUpperCase();
+  if (usePostgres) {
+    const res = await pool.query('SELECT * FROM custom_requests WHERE UPPER(req_code) = $1 OR UPPER(id) = $1', [cleanCode]);
+    if (res.rows.length === 0) return null;
+    const r = res.rows[0];
+    return {
+      id: r.id,
+      reqCode: r.req_code,
+      customerName: r.customer_name,
+      customerContact: r.customer_contact,
+      occasion: r.occasion,
+      budget: r.budget,
+      details: r.details,
+      ribbon: r.ribbon,
+      message: r.message,
+      status: r.status,
+      adminReply: r.admin_reply,
+      createdAt: r.created_at
+    };
+  }
+  return (fallbackStore.customRequests || []).find(r => 
+    String(r.reqCode).trim().toUpperCase() === cleanCode || String(r.id).trim().toUpperCase() === cleanCode
+  ) || null;
+}
+
+async function updateCustomRequestStatus(id, status, adminReply = '') {
+  if (usePostgres) {
+    await pool.query(
+      'UPDATE custom_requests SET status = $2, admin_reply = $3 WHERE id = $1 OR req_code = $1',
+      [id, status, adminReply]
+    );
+  } else {
+    const reqItem = (fallbackStore.customRequests || []).find(r => r.id === id || r.reqCode === id);
+    if (reqItem) {
+      reqItem.status = status;
+      reqItem.adminReply = adminReply;
+      reqItem.updatedAt = new Date().toISOString();
+    }
+    await saveFallbackData();
+  }
+  return { id, status, adminReply };
+}
+
 async function getAdminStats() {
   const orders = await getOrders();
   const products = await getProducts({ activeOnly: false });
+  const customReqs = await getCustomRequests();
   const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
   return {
     totalOrders: orders.length,
     totalRevenue,
     totalProducts: products.length,
+    pendingCustomRequests: customReqs.filter(r => r.status === 'pending').length,
+    totalCustomRequests: customReqs.length,
     usePostgres
   };
 }
@@ -658,5 +760,9 @@ module.exports = {
   updateOrderStatus,
   getSiteSettings,
   updateSiteSettings,
-  getAdminStats
+  getAdminStats,
+  createCustomRequest,
+  getCustomRequests,
+  getCustomRequestByCode,
+  updateCustomRequestStatus
 };

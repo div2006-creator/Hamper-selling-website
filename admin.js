@@ -82,6 +82,7 @@ function initAdminApp() {
   loadProducts();
   loadCategories();
   loadOrders();
+  loadCustomRequests();
   loadSettings();
 }
 
@@ -99,6 +100,7 @@ function switchTab(tabId) {
     products: 'Manage Products & Hampers',
     categories: 'Product Categories & Occasions',
     orders: 'Customer Orders & Fulfilment',
+    'custom-requests': 'Personalised Hamper Requests',
     settings: 'Store Banners & Announcements'
   };
   document.querySelector('#pageTitle').textContent = titles[tabId] || 'Dashboard';
@@ -478,6 +480,148 @@ document.querySelector('#settingsForm')?.addEventListener('submit', async (e) =>
   try {
     await adminApi('/settings', { method: 'PUT', body: JSON.stringify(payload) });
     showToast('Storefront banner & contact settings updated live!');
+  } catch (err) {
+    showToast(err.message);
+  }
+});
+
+// 6. Custom Hamper Requests Management
+let currentCustomRequests = [];
+let customReqFilter = 'all';
+
+async function loadCustomRequests() {
+  try {
+    currentCustomRequests = await adminApi('/custom-requests');
+    
+    // Update badge count for pending requests
+    const pendingCount = (currentCustomRequests || []).filter(r => r.status === 'pending').length;
+    const badge = document.querySelector('#pendingCustomBadge');
+    if (badge) {
+      if (pendingCount > 0) {
+        badge.textContent = pendingCount;
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    renderCustomRequestsTable();
+  } catch (err) {
+    console.error('Failed to load custom requests:', err);
+    const tbody = document.querySelector('#customRequestsTableBody');
+    if (tbody) tbody.innerHTML = `<tr><td colspan="7" class="loading-cell">Failed to load custom requests: ${err.message}</td></tr>`;
+  }
+}
+
+function filterCustomRequests(status) {
+  customReqFilter = status;
+  document.querySelectorAll('#tab-custom-requests .filter-pills .pill').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.toLowerCase().includes(status));
+  });
+  renderCustomRequestsTable();
+}
+
+function renderCustomRequestsTable() {
+  const tbody = document.querySelector('#customRequestsTableBody');
+  if (!tbody) return;
+
+  let list = currentCustomRequests || [];
+  if (customReqFilter !== 'all') {
+    list = list.filter(r => r.status === customReqFilter);
+  }
+
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="7" class="loading-cell">No ${customReqFilter !== 'all' ? customReqFilter : ''} custom requests found.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = list.map(r => {
+    let statusBadge = '<span class="pill" style="background:#fef3c7; color:#b45309; font-weight:700;">PENDING</span>';
+    if (r.status === 'accepted') {
+      statusBadge = '<span class="pill" style="background:#dcfce7; color:#15803d; font-weight:700;">ACCEPTED</span>';
+    } else if (r.status === 'rejected') {
+      statusBadge = '<span class="pill" style="background:#fee2e2; color:#b91c1c; font-weight:700;">REJECTED</span>';
+    }
+
+    return `
+      <tr>
+        <td><strong>${r.reqCode}</strong><br/><small class="muted">${new Date(r.createdAt).toLocaleDateString()}</small></td>
+        <td>
+          <strong>${r.customerName}</strong><br/>
+          <small class="muted">📞 ${r.customerContact}</small>
+        </td>
+        <td>
+          <span class="pill tag-pill">${r.occasion}</span><br/>
+          <small class="muted">Budget: ${r.budget}</small>
+        </td>
+        <td>
+          <div style="max-width:240px; font-size:12px; line-height:1.4;">${r.details || 'N/A'}</div>
+        </td>
+        <td>
+          <small>🎀 ${r.ribbon || 'Default'}</small><br/>
+          ${r.message ? `<small class="muted" style="font-style:italic;">"${r.message}"</small>` : '<small class="muted">No custom card note</small>'}
+        </td>
+        <td>
+          ${statusBadge}
+          ${r.adminReply ? `<div style="font-size:11px; margin-top:4px; font-style:italic; color:#555; background:#f5f3eb; padding:4px 6px; border-radius:4px;">Reply: ${r.adminReply}</div>` : ''}
+        </td>
+        <td>
+          <div style="display:flex; gap:6px;">
+            <button class="admin-btn primary-btn" style="padding:4px 8px; font-size:10px; background:#166534;" onclick="openCustomReqModal('${r.id}', 'accepted')">
+              <span class="material-symbols-outlined" style="font-size:14px;">check_circle</span> Accept &amp; Reply
+            </button>
+            <button class="admin-btn secondary-btn" style="padding:4px 8px; font-size:10px; color:#b91c1c; border-color:#fca5a5;" onclick="openCustomReqModal('${r.id}', 'rejected')">
+              <span class="material-symbols-outlined" style="font-size:14px;">cancel</span> Reject &amp; Reply
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function openCustomReqModal(id, defaultAction = 'accepted') {
+  const reqItem = (currentCustomRequests || []).find(r => r.id === id || r.reqCode === id);
+  if (!reqItem) return;
+
+  document.querySelector('#modalReqId').value = reqItem.id;
+  document.querySelector('#modalReqCustomer').textContent = `${reqItem.customerName} (${reqItem.customerContact})`;
+  document.querySelector('#modalReqOccasion').textContent = reqItem.occasion;
+  document.querySelector('#modalReqBudget').textContent = reqItem.budget;
+  document.querySelector('#modalReqDetails').textContent = reqItem.details;
+  document.querySelector('#modalReqDecisionSelect').value = defaultAction;
+  
+  const replyField = document.querySelector('#modalAdminReplyText');
+  if (reqItem.adminReply) {
+    replyField.value = reqItem.adminReply;
+  } else {
+    replyField.value = defaultAction === 'accepted'
+      ? `Approved! We can assemble this custom hamper for your requested details. Official Quote: ₹3,500 with Free Express Delivery. Contact us on WhatsApp (8655239282) to confirm order.`
+      : `Regrettably, we cannot fulfill this specific request at this time as some requested items are out of stock. We recommend exploring our Bestsellers catalog.`;
+  }
+
+  document.querySelector('#customReqModal').style.display = 'grid';
+}
+
+function closeCustomReqModal() {
+  document.querySelector('#customReqModal').style.display = 'none';
+}
+
+document.querySelector('#customReqResponseForm')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = document.querySelector('#modalReqId').value;
+  const status = document.querySelector('#modalReqDecisionSelect').value;
+  const adminReply = document.querySelector('#modalAdminReplyText').value.trim();
+
+  try {
+    await adminApi(`/custom-requests/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status, adminReply })
+    });
+    showToast(`Custom request ${status === 'accepted' ? 'ACCEPTED' : 'REJECTED'} and reply saved!`);
+    closeCustomReqModal();
+    loadCustomRequests();
+    loadDashboardStats();
   } catch (err) {
     showToast(err.message);
   }

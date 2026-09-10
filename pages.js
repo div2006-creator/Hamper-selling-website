@@ -128,7 +128,79 @@ function render(view) {
     </section>`;
     hydrateCategoryCatalog();
   } else if (targetView === 'personalise') {
-    content.innerHTML = `<section class="page-width inner-page personalise-page">${sectionHeader('Made Meaningful', 'Personalise Your Hamper Studio', 'Turn a beautiful gift into an unforgettable gesture with considered details, handwritten words and your own finishing touch.')}<div class="studio-grid"><div class="studio-preview"><img src="images/bday_hamper.png" alt="Personalised hamper preview" /><span class="preview-label">Your hamper preview</span></div><div class="studio-form"><label>Gift message<textarea id="personaliseMsg" placeholder="Write a note that feels like you..."></textarea></label><label>Choose a ribbon<select id="personaliseRibbon"><option>Terracotta Raw Silk</option><option>Forest Green Velvet</option><option>Ivory Cotton</option><option>Royal Gold Satin</option></select></label><label>Gift occasion<select id="personaliseOccasion"><option>Anniversary</option><option>Birthday</option><option>Wedding</option><option>Just Because</option></select></label><button class="button button-dark" id="savePersonalisation">Save Your Details <span class="material-symbols-outlined">arrow_forward</span></button></div></div></section>`;
+    content.innerHTML = `<section class="page-width inner-page personalise-page">
+      ${sectionHeader('Made Meaningful', 'Personalise Your Hamper Studio', 'Request a custom curated hamper crafted to your exact preferences. Our studio concierge reviews every request and sends your quote and confirmation directly.')}
+      <div class="studio-grid">
+        <div class="studio-preview">
+          <img src="images/bday_hamper.png" alt="Personalised hamper preview" id="personalisePreviewImg" />
+          <span class="preview-label">Supriszo Bespoke Studio</span>
+          <div class="status-lookup-box" style="margin-top: 24px; padding: 20px; background: #fffdf8; border: 1px solid #ebe8df; border-radius: 8px;">
+            <h4 style="font-family: var(--serif); margin: 0 0 8px; font-size: 15px; display:flex; align-items:center; gap:6px;"><span class="material-symbols-outlined" style="color:var(--copper); font-size: 18px;">search</span> Track Custom Request</h4>
+            <p style="font-size: 11px; color: var(--muted); margin: 0 0 12px;">Already submitted a custom request? Enter your Request Code below to see admin updates &amp; reply.</p>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="lookupReqCode" placeholder="e.g. REQ-849201" style="flex:1; padding: 8px 12px; font-size: 11px; border: 1px solid var(--line); border-radius: 4px;" />
+              <button type="button" id="btnLookupReq" class="button button-dark" style="padding: 8px 14px; font-size: 10px;">Check Status</button>
+            </div>
+            <div id="lookupResult" style="margin-top: 14px;"></div>
+          </div>
+        </div>
+
+        <div class="studio-form" id="customReqFormWrap">
+          <form id="customHamperForm">
+            <h3 style="font-family: var(--serif); font-size: 20px; margin: 0 0 16px; color: var(--ink);">Request a Custom Hamper</h3>
+            
+            <div class="pdp-pers-grid" style="grid-template-columns: 1fr 1fr; display: grid; gap: 12px;">
+              <label style="font-size:11px; font-weight:600;">Your Full Name *<input type="text" id="reqCustomerName" required placeholder="e.g. Ananya Sharma" style="width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:4px; font-size:12px; margin-top:4px;" /></label>
+              <label style="font-size:11px; font-weight:600;">Phone / WhatsApp *<input type="text" id="reqCustomerContact" required placeholder="+91 8655239282" style="width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:4px; font-size:12px; margin-top:4px;" /></label>
+            </div>
+
+            <div class="pdp-pers-grid" style="grid-template-columns: 1fr 1fr; display: grid; gap: 12px; margin-top: 12px;">
+              <label style="font-size:11px; font-weight:600;">Occasion / Theme
+                <select id="reqOccasion" style="width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:4px; font-size:12px; margin-top:4px; background:#fff;">
+                  <option>Birthday</option>
+                  <option>Anniversary</option>
+                  <option>Wedding</option>
+                  <option>Corporate Gifting</option>
+                  <option>Festivals / Diwali / Rakhi</option>
+                  <option>For Her</option>
+                  <option>For Him</option>
+                  <option>Just Because</option>
+                </select>
+              </label>
+              <label style="font-size:11px; font-weight:600;">Target Budget
+                <select id="reqBudget" style="width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:4px; font-size:12px; margin-top:4px; background:#fff;">
+                  <option>₹1,500 – ₹2,500</option>
+                  <option>₹2,500 – ₹5,000</option>
+                  <option>₹5,000 – ₹10,000</option>
+                  <option>₹10,000+ Luxury Edit</option>
+                </select>
+              </label>
+            </div>
+
+            <label style="display:block; margin-top: 12px; font-size:11px; font-weight:600;">Choose Signature Ribbon
+              <select id="reqRibbon" style="width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:4px; font-size:12px; margin-top:4px; background:#fff;">
+                <option>Terracotta Raw Silk</option>
+                <option>Forest Green Velvet</option>
+                <option>Ivory Cotton</option>
+                <option>Royal Gold Satin</option>
+              </select>
+            </label>
+
+            <label style="display:block; margin-top: 12px; font-size:11px; font-weight:600;">Gift Card Message (Optional)
+              <textarea id="reqMessage" placeholder="Write a note to be hand-printed on gold foil card..." style="width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:4px; font-size:12px; margin-top:4px; font-family:var(--sans); min-height:55px;"></textarea>
+            </label>
+
+            <label style="display:block; margin-top: 12px; font-size:11px; font-weight:600;">Custom Items &amp; Instructions *
+              <textarea id="reqDetails" required placeholder="Describe desired hamper contents (e.g. almond chocolates, scented candle, brass photo frame, custom name engraving...)" style="width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:4px; font-size:12px; margin-top:4px; font-family:var(--sans); min-height:80px;"></textarea>
+            </label>
+
+            <button type="submit" id="btnSubmitCustomReq" class="button button-dark" style="margin-top: 18px; width: 100%; justify-content: center; font-weight: 700; cursor:pointer;">
+              Submit Request to Admin <span class="material-symbols-outlined">send</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>`;
     hydratePersonalisation();
   } else if (targetView === 'about') {
     content.innerHTML = `<section class="page-width inner-page about-page"><div class="about-hero"><div>${sectionHeader('Our Story', 'Gifts that hold a little more meaning.', 'Supriszo means thoughtful surprises. We create considered hampers for the people, places and moments you want to hold close.')}<p class="about-copy">From hand-poured candles to brass keepsakes and small-batch delicacies, every Supriszo & Co. box is composed like a personal story. We partner with independent makers across India and wrap every order by hand in our Mumbai studio.</p><a class="button button-dark" href="pages.html?view=hampers">Explore Our Hampers <span class="material-symbols-outlined">arrow_forward</span></a></div><img src="images/anniversary_romance_hamper.png" alt="Supriszo and Co. gifting studio" /></div></section>`;
@@ -1163,11 +1235,108 @@ function hydrateCategoryCatalog() {
 }
 
 function hydratePersonalisation() {
-  api('/personalisation').then((data) => {
-    if (data.message) document.querySelector('#personaliseMsg').value = data.message;
-    if (data.ribbon) document.querySelector('#personaliseRibbon').value = data.ribbon;
-    if (data.occasion) document.querySelector('#personaliseOccasion').value = data.occasion;
-  }).catch(() => {});
+  const form = document.querySelector('#customHamperForm');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = document.querySelector('#btnSubmitCustomReq');
+      if (btn) { btn.disabled = true; btn.innerHTML = 'Submitting Request...'; }
+
+      const payload = {
+        customerName: document.querySelector('#reqCustomerName')?.value.trim(),
+        customerContact: document.querySelector('#reqCustomerContact')?.value.trim(),
+        occasion: document.querySelector('#reqOccasion')?.value,
+        budget: document.querySelector('#reqBudget')?.value,
+        ribbon: document.querySelector('#reqRibbon')?.value,
+        message: document.querySelector('#reqMessage')?.value.trim(),
+        details: document.querySelector('#reqDetails')?.value.trim()
+      };
+
+      fetch('/api/custom-requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.request) {
+          showToast('Custom hamper request submitted successfully!');
+          const wrap = document.querySelector('#customReqFormWrap');
+          if (wrap) {
+            wrap.innerHTML = `
+              <div style="background:#fffdf8; border:1px solid #d4c5a9; padding:28px; border-radius:10px; text-align:center;">
+                <span class="material-symbols-outlined" style="font-size:48px; color:var(--copper); margin-bottom:12px;">task_alt</span>
+                <h3 style="font-family:var(--serif); font-size:22px; margin:0 0 8px; color:var(--ink);">Request Sent to Admin!</h3>
+                <p style="font-size:12px; color:var(--muted); line-height:1.6; margin:0 0 16px;">Our studio concierge has received your request. We will review your custom hamper requirements and send an official quote &amp; reply.</p>
+                <div style="background:#f5f3eb; border:1px dashed var(--copper); padding:14px; border-radius:6px; display:inline-block; margin-bottom:16px;">
+                  <span style="font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); display:block;">Your Tracking Code</span>
+                  <strong style="font-size:20px; color:var(--olive); font-family:monospace; letter-spacing:1px;">${data.request.reqCode}</strong>
+                </div>
+                <p style="font-size:11px; color:#15803d; font-weight:600; margin:0 0 16px;">Status: 🟡 PENDING ADMIN REVIEW</p>
+                <button type="button" class="button button-dark" onclick="window.location.reload();" style="margin-inline:auto;">Submit Another Request</button>
+              </div>
+            `;
+          }
+        } else {
+          showToast(data.error || 'Failed to submit request');
+          if (btn) { btn.disabled = false; btn.innerHTML = 'Submit Request to Admin <span class="material-symbols-outlined">send</span>'; }
+        }
+      })
+      .catch(err => {
+        showToast('Error submitting request: ' + err.message);
+        if (btn) { btn.disabled = false; btn.innerHTML = 'Submit Request to Admin <span class="material-symbols-outlined">send</span>'; }
+      });
+    });
+  }
+
+  const lookupBtn = document.querySelector('#btnLookupReq');
+  if (lookupBtn) {
+    lookupBtn.addEventListener('click', () => {
+      const codeInput = document.querySelector('#lookupReqCode');
+      const resultDiv = document.querySelector('#lookupResult');
+      const code = codeInput ? codeInput.value.trim() : '';
+      if (!code) {
+        if (resultDiv) resultDiv.innerHTML = '<p style="color:#b91c1c; font-size:11px;">Please enter a valid request code.</p>';
+        return;
+      }
+      if (resultDiv) resultDiv.innerHTML = '<p style="font-size:11px; color:var(--muted);">Searching request...</p>';
+
+      fetch(`/api/custom-requests/status/${encodeURIComponent(code)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          resultDiv.innerHTML = `<p style="color:#b91c1c; font-size:11px;">${data.error}</p>`;
+          return;
+        }
+        let statusBadge = '<span style="background:#fef3c7; color:#b45309; padding:3px 8px; border-radius:4px; font-weight:700; font-size:10px;">PENDING REVIEW</span>';
+        if (data.status === 'accepted') {
+          statusBadge = '<span style="background:#dcfce7; color:#15803d; padding:3px 8px; border-radius:4px; font-weight:700; font-size:10px;">ACCEPTED BY ADMIN</span>';
+        } else if (data.status === 'rejected') {
+          statusBadge = '<span style="background:#fee2e2; color:#b91c1c; padding:3px 8px; border-radius:4px; font-weight:700; font-size:10px;">REJECTED</span>';
+        }
+
+        resultDiv.innerHTML = `
+          <div style="background:#fff; border:1px solid var(--line); padding:12px; border-radius:6px; font-size:11px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <strong>Code: ${data.reqCode}</strong>
+              ${statusBadge}
+            </div>
+            <p style="margin:0 0 4px; color:var(--muted);"><strong>Occasion:</strong> ${data.occasion} | <strong>Budget:</strong> ${data.budget}</p>
+            <p style="margin:0 0 6px; color:var(--ink);"><strong>Items:</strong> ${data.details}</p>
+            ${data.adminReply ? `
+              <div style="background:#fbfaf5; border-left:3px solid var(--copper); padding:8px 10px; margin-top:8px;">
+                <strong style="color:var(--copper); display:block; margin-bottom:2px;">Studio Admin Reply:</strong>
+                <p style="margin:0; font-style:italic; color:var(--ink);">${data.adminReply}</p>
+              </div>
+            ` : '<p style="margin:6px 0 0; font-style:italic; color:var(--muted);">No admin reply yet. Check back soon!</p>'}
+          </div>
+        `;
+      })
+      .catch(err => {
+        if (resultDiv) resultDiv.innerHTML = `<p style="color:#b91c1c; font-size:11px;">Error: ${err.message}</p>`;
+      });
+    });
+  }
 }
 
 function hydrateCheckoutPage() {

@@ -517,6 +517,56 @@ app.put('/api/admin/settings', requireAdmin, express.json(), async (request, res
   }
 });
 
+// CUSTOM HAMPER REQUEST ENDPOINTS
+
+app.post('/api/custom-requests', rateLimit(15, 60000), express.json(), async (request, response) => {
+  try {
+    const data = request.body || {};
+    if (!data.customerName && !data.name) {
+      return response.status(400).json({ error: 'Customer name is required' });
+    }
+    if (!data.customerContact && !data.phone && !data.email) {
+      return response.status(400).json({ error: 'Contact phone or email is required' });
+    }
+    const customReq = await db.createCustomRequest(data);
+    response.status(201).json({ success: true, request: customReq });
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/custom-requests/status/:reqCode', async (request, response) => {
+  try {
+    const reqItem = await db.getCustomRequestByCode(request.params.reqCode);
+    if (!reqItem) return response.status(404).json({ error: 'Custom hamper request not found' });
+    response.json(reqItem);
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/admin/custom-requests', requireAdmin, async (_request, response) => {
+  try {
+    const requests = await db.getCustomRequests();
+    response.json(requests);
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
+app.patch('/api/admin/custom-requests/:id', requireAdmin, express.json(), async (request, response) => {
+  try {
+    const { status, adminReply } = request.body || {};
+    if (!status || !['accepted', 'rejected', 'pending'].includes(status)) {
+      return response.status(400).json({ error: 'Valid status (accepted, rejected, pending) is required' });
+    }
+    const updated = await db.updateCustomRequestStatus(request.params.id, status, adminReply || '');
+    response.json({ success: true, request: updated });
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
 // Global error handler
 app.use((error, _request, response, _next) => {
   console.error(error);

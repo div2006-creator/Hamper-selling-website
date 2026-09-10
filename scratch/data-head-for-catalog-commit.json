@@ -1,0 +1,623 @@
+{
+  "products": [
+    {
+      "id": "bday-1",
+      "name": "Confetti Celebration Box",
+      "shortName": "Confetti Celebration",
+      "categoryId": "birthday",
+      "tag": "Popular",
+      "price": 1299,
+      "mrp": 1699,
+      "image": "images/bday-1.jpg",
+      "description": "Gourmet confetti cookies, birthday sparklers, artisan dark cacao bark and party popping candy.",
+      "rating": 4.9,
+      "reviews": 184,
+      "stockQuantity": 48
+    },
+    {
+      "id": "bday-2",
+      "name": "Birthday Brew & Truffles Box",
+      "shortName": "Birthday Brew & Truffles",
+      "categoryId": "birthday",
+      "tag": "Best Seller",
+      "price": 1499,
+      "mrp": 1899,
+      "image": "images/bday-2.jpg",
+      "description": "Single-origin coffee, handcrafted belgian truffles, roasted almonds and a ceramic mug keepsake.",
+      "rating": 4.8,
+      "reviews": 210
+    },
+    {
+      "id": "bday-3",
+      "name": "Velvet Milestone Birthday Edition",
+      "shortName": "Velvet Milestone",
+      "categoryId": "birthday",
+      "tag": "Signature",
+      "price": 2199,
+      "mrp": 2799,
+      "image": "images/bday-3.jpg",
+      "description": "Gold-trimmed keepsake box, artisanal macaroons, crystal champagne flutes and scented soy candle.",
+      "rating": 4.9,
+      "reviews": 142
+    },
+    {
+      "id": "bday-4",
+      "name": "Gourmet Birthday Feast Box",
+      "shortName": "Gourmet Birthday Feast",
+      "categoryId": "birthday",
+      "tag": "Trending",
+      "price": 1899,
+      "mrp": 2399,
+      "image": "images/bday-4.jpg",
+      "description": "Roasted cashew crunch, hazelnut spread, dark roasts, and a gold foil handwritten greeting card.",
+      "rating": 4.7,
+      "reviews": 98
+    },
+    {
+      "id": "bday-5",
+      "name": "Sweet Birthday Celebration Hamper",
+      "shortName": "Sweet Celebration",
+      "categoryId": "birthday",
+      "tag": "Value Pick",
+      "price": 999,
+      "mrp": 1299,
+      "image": "images/bday-5.jpg",
+      "description": "Pistachio bites, almond dragees, organic darjeeling tea and a carved brass tea spoon.",
+      "rating": 4.8,
+      "reviews": 156
+    },
+    {
+      "id": "bday-6",
+      "name": "Midnight Birthday Surprise Box",
+      "shortName": "Midnight Birthday Surprise",
+      "categoryId": "birthday",
+      "tag": "New",
+      "price": 1699,
+      "mrp": 2199,
+      "image": "images/bday-6.jpg",
+      "description": "Midnight dark chocolate slabs, scented wax tablets, roasted dry fruit jar and silk ribbon finish.",
+      "rating": 4.9,
+      "reviews": 88
+    },
+    {
+      "id": "anniv-1",
+      "name": "The Romance Anniversary Edit",
+      "shortName": "The Romance Edit",
+      "categoryId": "anniversary",
+      "tag": "Bestseller",
+      "price": 1999,
+      "mrp": 2599,
+      "image": "images/anniv-1.jpg",
+      "description": "Pair of crystal flutes, handcrafted belgian chocolate truffles, and a damask rose soy candle.",
+      "rating": 4.9,
+      "reviews": 230
+    },
+    {
+      "id": "anniv-2",
+      "name": "Golden Milestone Anniversary Trunk",
+      "shortName": "Golden Milestone",
+      "categoryId": "anniversary",
+      "tag": "Signature",
+      "price": 2499,
+      "mrp": 3199,
+      "image": "images/anniv-2.jpg",
+      "description": "Brass photo keepsake frame, gold-leafed saffron infusion, and Mamra almonds in velvet box.",
+      "rating": 5,
+      "reviews": 175
+    },
+    {
+      "id": "anniv-3",
+      "name": "Forever Love & Spice Edit",
+      "shortName": "Forever Love",
+      "categoryId": "anniversary",
+      "tag": "Popular",
+      "price": 1799,
+      "mrp": 2299,
+      "image": "images/anniv-3.jpg",
+      "description": "Artisanal rose tea, spiced dark chocolates, and a hand-carved wooden tray.",
+      "rating": 4.8,
+      "reviews": 112
+    },
+    {
+      "id": "anniv-4",
+      "name": "Aroma & Saffron Ritual Box",
+      "shortName": "Aroma & Saffron Ritual",
+      "categoryId": "anniversary",
+      "tag": "Luxury",
+      "price": 2199,
+      "mrp": 2799,
+      "image": "images/anniv-4.jpg",
+      "description": "Kashmiri saffron, scented soy candle jar, salted pistachios, and brass carved spoon.",
+      "rating": 4.9,
+      "reviews": 140
+    },
+    {
+      "id": "anniv-5",
+      "name": "Starlight Keepsake Anniversary Box",
+      "shortName": "Starlight Keepsake",
+      "categoryId": "anniversary",
+      "tag": "New",
+      "price": 1599,
+      "mrp": 2099,
+      "image": "images/anniv-5.jpg",
+      "description": "Champagne scented candle, salted cashew jar, and terracotta raw silk gift wrap.",
+      "rating": 4.7,
+      "reviews": 89
+    },
+    {
+      "id": "anniv-6",
+      "name": "Eternal Bond Luxury Basket",
+      "shortName": "Eternal Bond Basket",
+      "categoryId": "anniversary",
+      "tag": "Grand Edit",
+      "price": 2899,
+      "mrp": 3699,
+      "image": "images/anniv-6.jpg",
+      "description": "Double-tier woven hamper with gourmet preserves, artisan crackers, and fine brass bell.",
+      "rating": 4.9,
+      "reviews": 160
+    },
+    {
+      "id": "royal-heritage",
+      "name": "Royal Heritage Celebration Hamper",
+      "shortName": "Royal Heritage",
+      "categoryId": "wedding",
+      "tag": "Signature Box",
+      "price": 1899,
+      "mrp": 2499,
+      "image": "images/royal-heritage.jpg",
+      "description": "Saffron threads, salted dry fruits, artisanal dark chocolates and carved brass diya.",
+      "rating": 4.9,
+      "reviews": 342
+    },
+    {
+      "id": "wed-2",
+      "name": "Shahi Shehnai Wedding Gift Trunk",
+      "shortName": "Shahi Shehnai Trunk",
+      "categoryId": "wedding",
+      "tag": "Royal Trunk",
+      "price": 3499,
+      "mrp": 4299,
+      "image": "images/wed-2.jpg",
+      "description": "Hand-carved brass bell, Kashmiri saffron, royal mithai bites, and raw silk wrap.",
+      "rating": 5,
+      "reviews": 280
+    },
+    {
+      "id": "wed-3",
+      "name": "Royal Brass Keepsake Wedding Hamper",
+      "shortName": "Royal Brass Keepsake",
+      "categoryId": "wedding",
+      "tag": "Bestseller",
+      "price": 2799,
+      "mrp": 3499,
+      "image": "images/wed-3.jpg",
+      "description": "Handcrafted lotus brass diya, Mamra almonds, silver-coated cardamom and velvet gift box.",
+      "rating": 4.9,
+      "reviews": 195
+    },
+    {
+      "id": "wed-4",
+      "name": "Bridal Elegance Keepsake Box",
+      "shortName": "Bridal Elegance",
+      "categoryId": "wedding",
+      "tag": "Bridal Edit",
+      "price": 2299,
+      "mrp": 2899,
+      "image": "images/wed-4.jpg",
+      "description": "Rose-infused bath salts, artisanal almond brittles, and hand-painted greeting card.",
+      "rating": 4.8,
+      "reviews": 134
+    },
+    {
+      "id": "wed-5",
+      "name": "Royal Courtyard Mithai Hamper",
+      "shortName": "Royal Courtyard Mithai",
+      "categoryId": "wedding",
+      "tag": "Delight",
+      "price": 1999,
+      "mrp": 2499,
+      "image": "images/wed-5.jpg",
+      "description": "Kaju katli squares, saffron peda, roasted pistachios and gold foiled box.",
+      "rating": 4.7,
+      "reviews": 165
+    },
+    {
+      "id": "wed-6",
+      "name": "Grand Auspicious Blessings Box",
+      "shortName": "Grand Auspicious Box",
+      "categoryId": "wedding",
+      "tag": "Grand Edit",
+      "price": 2999,
+      "mrp": 3799,
+      "image": "images/wed-6.jpg",
+      "description": "Carved brass idol, silver dry fruit bowls, and premium organic saffron tea.",
+      "rating": 5,
+      "reviews": 210
+    },
+    {
+      "id": "festival-light",
+      "name": "Festival Light & Diya Hamper",
+      "shortName": "Festival Light",
+      "categoryId": "festivals",
+      "tag": "Festive",
+      "price": 1299,
+      "mrp": 1599,
+      "image": "images/festival-light.jpg",
+      "description": "Saffron sweets, brass diya, rose tea and a keepsake greeting card.",
+      "rating": 4.7,
+      "reviews": 86
+    },
+    {
+      "id": "fest-2",
+      "name": "Shubh Deepavali Grand Festive Box",
+      "shortName": "Shubh Deepavali Grand",
+      "categoryId": "festivals",
+      "tag": "Bestseller",
+      "price": 2299,
+      "mrp": 2899,
+      "image": "images/fest-2.jpg",
+      "description": "Pair of brass oil lamps, organic marigold tea, roasted nuts and artisan jaggery sweets.",
+      "rating": 4.9,
+      "reviews": 310
+    },
+    {
+      "id": "fest-3",
+      "name": "Rakhi Bandhan Festive Keepsake",
+      "shortName": "Rakhi Bandhan Keepsake",
+      "categoryId": "festivals",
+      "tag": "Rakhi Special",
+      "price": 1499,
+      "mrp": 1899,
+      "image": "images/fest-3.jpg",
+      "description": "Hand-braided silk Rakhi, choco-coated almonds, and terracotta carved diya.",
+      "rating": 4.8,
+      "reviews": 178
+    },
+    {
+      "id": "fest-4",
+      "name": "Navratri Joy & Delights Edit",
+      "shortName": "Navratri Joy Edit",
+      "categoryId": "festivals",
+      "tag": "Festive Pick",
+      "price": 1199,
+      "mrp": 1499,
+      "image": "images/fest-4.jpg",
+      "description": "Salted makhana, dried cranberries, organic green tea and brass temple bell.",
+      "rating": 4.7,
+      "reviews": 94
+    },
+    {
+      "id": "fest-5",
+      "name": "New Year Golden Horizon Hamper",
+      "shortName": "New Year Golden Horizon",
+      "categoryId": "festivals",
+      "tag": "New Year",
+      "price": 2099,
+      "mrp": 2699,
+      "image": "images/fest-5.jpg",
+      "description": "Sparkling grape brew, artisan dark bark, roasted almonds and desk calendar card.",
+      "rating": 4.9,
+      "reviews": 120
+    },
+    {
+      "id": "fest-6",
+      "name": "Celebration of Lights Gift Trunk",
+      "shortName": "Celebration of Lights",
+      "categoryId": "festivals",
+      "tag": "Trunk Edit",
+      "price": 2699,
+      "mrp": 3399,
+      "image": "images/fest-6.jpg",
+      "description": "Brass thali accent, saffron peda, Mamra almonds and scented wax diya.",
+      "rating": 5,
+      "reviews": 240
+    },
+    {
+      "id": "corporate-curated",
+      "name": "Corporate Curated Box",
+      "shortName": "Corporate Curated Box",
+      "categoryId": "corporate-gifting",
+      "tag": "Corporate Bestseller",
+      "price": 1499,
+      "mrp": 1899,
+      "image": "images/corporate-curated.jpg",
+      "description": "Premium coffee, pistachios, chocolate bark and a handcrafted brass keepsake.",
+      "rating": 4.9,
+      "reviews": 128
+    },
+    {
+      "id": "corp-2",
+      "name": "Executive Desk Ritual Kit",
+      "shortName": "Executive Desk Kit",
+      "categoryId": "corporate-gifting",
+      "tag": "Executive",
+      "price": 1799,
+      "mrp": 2299,
+      "image": "images/corp-2.jpg",
+      "description": "Vegan leather notebook, brass pen, artisanal dark chocolate and cold brew concentrate.",
+      "rating": 4.8,
+      "reviews": 154
+    },
+    {
+      "id": "corp-3",
+      "name": "Milestone Achievement Corporate Trunk",
+      "shortName": "Milestone Achievement",
+      "categoryId": "corporate-gifting",
+      "tag": "Bulk Favorite",
+      "price": 2499,
+      "mrp": 3199,
+      "image": "images/corp-3.jpg",
+      "description": "Insulated copper tumbler, gourmet nut mix, dark cacao slab and thank you card.",
+      "rating": 4.9,
+      "reviews": 205
+    },
+    {
+      "id": "corp-4",
+      "name": "Artisanal Tea & Teak Office Box",
+      "shortName": "Artisanal Tea & Teak",
+      "categoryId": "corporate-gifting",
+      "tag": "Eco-Corporate",
+      "price": 1199,
+      "mrp": 1499,
+      "image": "images/corp-4.jpg",
+      "description": "Himalayan Darjeeling tea, teak coasters, honey jar and wooden stirrer.",
+      "rating": 4.7,
+      "reviews": 92
+    },
+    {
+      "id": "corp-5",
+      "name": "Leadership Elite VIP Hamper",
+      "shortName": "Leadership Elite VIP",
+      "categoryId": "corporate-gifting",
+      "tag": "VIP Executive",
+      "price": 3299,
+      "mrp": 4099,
+      "image": "images/corp-5.jpg",
+      "description": "Leather-bound planner, brass bookmark, single-origin coffee and Mamra almonds.",
+      "rating": 5,
+      "reviews": 168
+    },
+    {
+      "id": "corp-6",
+      "name": "Team Appreciation Snack Kit",
+      "shortName": "Team Appreciation Kit",
+      "categoryId": "corporate-gifting",
+      "tag": "Team Pick",
+      "price": 999,
+      "mrp": 1299,
+      "image": "images/corp-6.jpg",
+      "description": "Roasted cashew crunch, dark chocolate bark, and organic green tea bags.",
+      "rating": 4.8,
+      "reviews": 130
+    },
+    {
+      "id": "self-care-ritual",
+      "name": "Self-Care Ritual Box",
+      "shortName": "Self-Care Ritual",
+      "categoryId": "for-her",
+      "tag": "For Her",
+      "price": 1149,
+      "mrp": 1399,
+      "image": "images/self-care-ritual.jpg",
+      "description": "Scented soy candle, organic tea, nourishing treats and a handwritten note.",
+      "rating": 4.8,
+      "reviews": 76
+    },
+    {
+      "id": "her-2",
+      "name": "Rose & Velvet Spa Hamper",
+      "shortName": "Rose & Velvet Spa",
+      "categoryId": "for-her",
+      "tag": "Pamper Edit",
+      "price": 1899,
+      "mrp": 2399,
+      "image": "images/her-2.jpg",
+      "description": "Organic rose body butter, silk eye mask, rose quartz stone and floral bath tea.",
+      "rating": 4.9,
+      "reviews": 180
+    },
+    {
+      "id": "her-3",
+      "name": "Blossom & Botanical Edit",
+      "shortName": "Blossom & Botanical",
+      "categoryId": "for-her",
+      "tag": "Floral Pick",
+      "price": 1599,
+      "mrp": 1999,
+      "image": "images/her-3.jpg",
+      "description": "Jasmine blossom green tea, lavender soy candle and salted pistachios.",
+      "rating": 4.8,
+      "reviews": 115
+    },
+    {
+      "id": "her-4",
+      "name": "Goddess Pamper Gift Set",
+      "shortName": "Goddess Pamper Set",
+      "categoryId": "for-her",
+      "tag": "Luxury Spa",
+      "price": 2299,
+      "mrp": 2899,
+      "image": "images/her-4.jpg",
+      "description": "Hand-poured coconut wax candle, almond body oil, dark cocoa bark and silk scrunchie.",
+      "rating": 5,
+      "reviews": 210
+    },
+    {
+      "id": "her-5",
+      "name": "Sweet Serenity Keepsake Box",
+      "shortName": "Sweet Serenity",
+      "categoryId": "for-her",
+      "tag": "Serenity",
+      "price": 1399,
+      "mrp": 1799,
+      "image": "images/her-5.jpg",
+      "description": "Pink salt bath soak, artisan chamomile tea, and white chocolate dragees.",
+      "rating": 4.7,
+      "reviews": 92
+    },
+    {
+      "id": "her-6",
+      "name": "Floral Dreams Luxury Basket",
+      "shortName": "Floral Dreams Basket",
+      "categoryId": "for-her",
+      "tag": "Grand Basket",
+      "price": 2599,
+      "mrp": 3299,
+      "image": "images/her-6.jpg",
+      "description": "Woven storage basket, rose face mist, artisan chocolates and botanical diffuser.",
+      "rating": 4.9,
+      "reviews": 164
+    },
+    {
+      "id": "gentlemans-edit",
+      "name": "Gentleman's Reserve Box",
+      "shortName": "Gentleman's Reserve",
+      "categoryId": "for-him",
+      "tag": "For Him",
+      "price": 1599,
+      "mrp": 1999,
+      "image": "images/gentlemans-edit.jpg",
+      "description": "Dark roasts, leather coasters, spiced almonds, and a brass key ring.",
+      "rating": 4.8,
+      "reviews": 64
+    },
+    {
+      "id": "him-2",
+      "name": "The Classic Grooming & Roast Edit",
+      "shortName": "Grooming & Roast",
+      "categoryId": "for-him",
+      "tag": "Grooming",
+      "price": 1899,
+      "mrp": 2399,
+      "image": "images/him-2.jpg",
+      "description": "Cedarwood beard balm, charcoal face wash, dark chocolate slab and pour-over coffee.",
+      "rating": 4.9,
+      "reviews": 140
+    },
+    {
+      "id": "him-3",
+      "name": "Smokey Bourbon & Crunch Hamper",
+      "shortName": "Smokey Bourbon",
+      "categoryId": "for-him",
+      "tag": "Smokey Edit",
+      "price": 2199,
+      "mrp": 2799,
+      "image": "images/him-3.jpg",
+      "description": "Bourbon-infused dark chocolates, smoked cashews and stainless steel flask.",
+      "rating": 4.8,
+      "reviews": 118
+    },
+    {
+      "id": "him-4",
+      "name": "Maverick Leather & Brew Set",
+      "shortName": "Maverick Brew Set",
+      "categoryId": "for-him",
+      "tag": "Maverick",
+      "price": 1499,
+      "mrp": 1899,
+      "image": "images/him-4.jpg",
+      "description": "Leather key organizer, cold brew concentrate, salted peanuts and brass bottle opener.",
+      "rating": 4.7,
+      "reviews": 85
+    },
+    {
+      "id": "him-5",
+      "name": "Urban Professional Kit for Him",
+      "shortName": "Urban Professional",
+      "categoryId": "for-him",
+      "tag": "Urban Edit",
+      "price": 1999,
+      "mrp": 2499,
+      "image": "images/him-5.jpg",
+      "description": "Matte black coffee tumbler, roasted pistachios, dark cacao bark and leather pouch.",
+      "rating": 4.9,
+      "reviews": 150
+    }
+  ],
+  "categories": [
+    {
+      "id": "birthday",
+      "name": "Birthday"
+    },
+    {
+      "id": "anniversary",
+      "name": "Anniversary"
+    },
+    {
+      "id": "wedding",
+      "name": "Wedding"
+    },
+    {
+      "id": "festivals",
+      "name": "Festivals"
+    },
+    {
+      "id": "corporate-gifting",
+      "name": "Corporate Gifting"
+    },
+    {
+      "id": "for-her",
+      "name": "For Her"
+    },
+    {
+      "id": "for-him",
+      "name": "For Him"
+    }
+  ],
+  "cart": {
+    "items": [],
+    "updatedAt": "2026-09-06T12:00:00.000Z"
+  },
+  "favorites": [],
+  "orders": [
+    {
+      "id": "SPR-A9731B",
+      "createdAt": "2026-09-10T14:35:59.373Z",
+      "status": "confirmed",
+      "customer": {
+        "name": "Test User",
+        "phone": "9876543210",
+        "address": "Bandra West, Mumbai - 234343"
+      },
+      "paymentMethod": "razorpay_upi",
+      "items": [
+        {
+          "productId": "bday-1",
+          "name": "Confetti Celebration Box",
+          "quantity": 1,
+          "personalisation": {},
+          "lineTotal": 1299
+        }
+      ],
+      "total": 1299
+    },
+    {
+      "id": "SPR-38D6B9",
+      "createdAt": "2026-09-10T14:32:13.899Z",
+      "status": "confirmed",
+      "customer": {
+        "name": "Aaryan Gupta",
+        "phone": "+91 8655239282",
+        "address": "Bandra West, Mumbai"
+      },
+      "paymentMethod": "razorpay_upi",
+      "items": [
+        {
+          "productId": "bday-1",
+          "name": "Confetti Celebration Box",
+          "quantity": 1,
+          "personalisation": {},
+          "lineTotal": 1299
+        }
+      ],
+      "total": 1299
+    }
+  ],
+  "settings": {
+    "announcement_text": "VIP FLASH OFFER: Extra 15% Off Luxury Hampers with code SUNDOWN15",
+    "helpline_phone": "+91 8655239282",
+    "instagram_handle": "@aaryann_guptaa",
+    "banner_shipping_text": "⚡ SAME-DAY EXPRESS DISPATCH PAN MUMBAI • 19,000+ PIN Codes Covered"
+  }
+}

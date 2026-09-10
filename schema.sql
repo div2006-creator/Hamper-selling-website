@@ -74,3 +74,19 @@ CREATE TABLE IF NOT EXISTS admin_users (
   password_hash VARCHAR(255) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS custom_requests (
+  id VARCHAR(100) PRIMARY KEY,
+  req_code VARCHAR(50) UNIQUE NOT NULL,
+  customer_name VARCHAR(255) NOT NULL,
+  customer_contact VARCHAR(255) NOT NULL,
+  occasion VARCHAR(100),
+  budget VARCHAR(100),
+  details TEXT,
+  ribbon VARCHAR(100),
+  message TEXT,
+  status VARCHAR(50) DEFAULT 'pending',
+  admin_reply TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
