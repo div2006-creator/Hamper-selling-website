@@ -202,7 +202,13 @@
     }
   ],
   "cart": {
-    "items": [],
+    "items": [
+      {
+        "productId": "bday-5",
+        "quantity": 1,
+        "personalisation": {}
+      }
+    ],
     "updatedAt": "2026-09-06T12:00:00.000Z"
   },
   "favorites": [],

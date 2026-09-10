@@ -136,6 +136,140 @@ function render(view) {
   } else if (targetView === 'checkout') {
     content.innerHTML = `<section class="page-width inner-page checkout-page"><div class="checkout-steps"><div class="checkout-step active"><b>1</b><span>Cart &amp; Hampers</span></div><div class="checkout-step active"><b>2</b><span>Delivery Details</span></div><div class="checkout-step active"><b>3</b><span>Payment</span></div></div>${sectionHeader('Secure Checkout', 'Almost there.', 'Enter delivery details and choose how you would like to pay.')}<div class="checkout-layout"><form class="checkout-form" id="checkoutForm"><div class="checkout-panel"><p class="eyebrow">Delivery Details</p><div class="checkout-form-grid"><label>Full name<input id="checkoutName" required placeholder="Your name" /></label><label>Phone number<input id="checkoutPhone" required pattern="[0-9+ \\-]{10,}" placeholder="+91 8655239282" /></label><label class="full-field">Address<textarea id="checkoutAddress" required placeholder="House / building, street, area"></textarea></label><label>City<input id="checkoutCity" required value="Mumbai" /></label><label>PIN code<input id="checkoutPin" required pattern="[0-9]{6}" placeholder="400001" /></label></div></div><div class="checkout-panel"><p class="eyebrow">Payment Method</p><div class="payment-options"><label><input type="radio" name="paymentMethod" value="upi" checked /><span class="material-symbols-outlined">account_balance_wallet</span><b>UPI</b><small>GPay, PhonePe, Paytm</small></label><label><input type="radio" name="paymentMethod" value="card" /><span class="material-symbols-outlined">credit_card</span><b>Card</b><small>Credit or debit card</small></label><label><input type="radio" name="paymentMethod" value="netbanking" /><span class="material-symbols-outlined">account_balance</span><b>Net Banking</b><small>All major banks</small></label><label><input type="radio" name="paymentMethod" value="cod" /><span class="material-symbols-outlined">payments</span><b>Cash on Delivery</b><small>Pay when it arrives</small></label></div></div><button class="button button-dark place-order" type="submit">Place Secure Order <span class="material-symbols-outlined">lock</span></button></form><aside class="order-summary checkout-summary"><p class="eyebrow">Order Summary</p><h2>Thoughtful gifts, on their way.</h2><div id="checkoutSummary">Loading your basket...</div></aside></div></section>`;
     hydrateCheckoutPage();
+  } else if (targetView === 'shipping') {
+    content.innerHTML = `<section class="page-width inner-page policy-page">
+      ${sectionHeader('Delivery & Logistics', 'Shipping & Delivery Policy', 'Transparent dispatch timelines, express delivery cutoffs, and pan-India coverage.')}
+      <div class="policy-container">
+        <div class="policy-card">
+          <h3><span class="material-symbols-outlined">bolt</span> One-Day Express Delivery Pan-Mumbai</h3>
+          <p>Orders placed before <strong>2:00 PM IST</strong> for Mumbai, Thane, and Navi Mumbai PIN codes (starting with 400, 401, 410) are processed and hand-delivered by 7:00 PM the next day.</p>
+        </div>
+        <div class="policy-card">
+          <h3><span class="material-symbols-outlined">flight_takeoff</span> Pan-India Air Express (19,000+ PIN Codes)</h3>
+          <p>For all other locations across India, hampers are dispatched via air express courier partners (Bluedart, Delhivery, DTDC). Estimated delivery is <strong>2 to 4 business days</strong> depending on your destination.</p>
+        </div>
+        <div class="policy-card">
+          <h3><span class="material-symbols-outlined">inventory_2</span> Transit-Safe Packaging Guarantee</h3>
+          <p>Every Supriszo box is double-packaged in high-density protective outer cartons with eco-friendly cushioning to withstand air and ground transit without a scratch.</p>
+        </div>
+        <div class="policy-card">
+          <h3><span class="material-symbols-outlined">distance</span> Real-Time Tracking</h3>
+          <p>As soon as your hamper is dispatched from our Mumbai studio, you receive an automated SMS &amp; WhatsApp notification containing your Supriszo Order ID to trace dispatch steps live on our <a href="pages.html?view=track">Track Order page</a>.</p>
+        </div>
+      </div>
+    </section>`;
+  } else if (targetView === 'returns') {
+    content.innerHTML = `<section class="page-width inner-page policy-page">
+      ${sectionHeader('Customer Protection', 'Return & Transit-Safe Guarantee', 'Our 100% replacement guarantee for damaged or missing hamper items.')}
+      <div class="policy-container">
+        <div class="policy-card">
+          <h3><span class="material-symbols-outlined">verified</span> 100% Replacement Commitment</h3>
+          <p>Because our hampers contain artisanal delicacies and personalized keepsakes, we do not accept general returns once delivered. However, if your box arrives damaged, broken, or with missing items during transit, we provide a <strong>100% complimentary replacement or full refund</strong> without hassle.</p>
+        </div>
+        <div class="policy-card">
+          <h3><span class="material-symbols-outlined">photo_camera</span> How to Claim Replacement (Within 24 Hours)</h3>
+          <ol class="policy-steps">
+            <li>Take a clear photo or short unboxing video showing the damaged box or item.</li>
+            <li>Send the photo along with your Order ID to concierge WhatsApp <a href="https://wa.me/918655239282" target="_blank">+91 8655239282</a> or call us directly.</li>
+            <li>Our concierge team dispatches a fresh replacement within 24 hours.</li>
+          </ol>
+        </div>
+        <div class="policy-card">
+          <h3><span class="material-symbols-outlined">currency_rupee</span> Refund Processing Timelines</h3>
+          <p>For approved refund claims, money is credited back to your original payment method (UPI / Credit Card / Bank) within 3 to 5 business days.</p>
+        </div>
+      </div>
+    </section>`;
+  } else if (targetView === 'terms') {
+    content.innerHTML = `<section class="page-width inner-page policy-page">
+      ${sectionHeader('Legal & Guidelines', 'Terms & Conditions', 'General terms of service governing your orders and use of Supriszo & Co.')}
+      <div class="policy-container">
+        <div class="policy-card">
+          <h3>1. Orders &amp; Pricing</h3>
+          <p>All hamper orders placed via our website are subject to availability and acceptance. Prices listed are inclusive of applicable taxes. In rare instances of item unavailability, we reserve the right to substitute an item with one of equal or greater value after informing the buyer.</p>
+        </div>
+        <div class="policy-card">
+          <h3>2. Personalised Messages &amp; Customization</h3>
+          <p>Buyers are responsible for verifying recipient names and handwritten card messages prior to order submission. Supriszo &amp; Co. disclaims liability for typographical errors submitted by customers in gift notes.</p>
+        </div>
+        <div class="policy-card">
+          <h3>3. Payment &amp; Security</h3>
+          <p>All online payments (UPI, Credit/Debit Cards, Net Banking) are securely processed using Razorpay PCI-DSS compliant payment gateways. Supriszo &amp; Co. does not store or process card numbers directly.</p>
+        </div>
+        <div class="policy-card">
+          <h3>4. Intellectual Property</h3>
+          <p>All brand marks, hamper curated photography, and website content are exclusive property of Supriszo &amp; Co. Gifting Solutions Pvt. Ltd.</p>
+        </div>
+      </div>
+    </section>`;
+  } else if (targetView === 'privacy') {
+    content.innerHTML = `<section class="page-width inner-page policy-page">
+      ${sectionHeader('Data Protection', 'Privacy Policy', 'How we handle, safeguard, and respect your personal information.')}
+      <div class="policy-container">
+        <div class="policy-card">
+          <h3>1. Information We Collect</h3>
+          <p>We collect essential delivery information including your name, recipient name, contact phone number, shipping address, and personalized gift message to fulfill your hamper orders.</p>
+        </div>
+        <div class="policy-card">
+          <h3>2. Zero Data Selling Guarantee</h3>
+          <p>We respect your privacy completely. Your personal data and recipient contact details are strictly used for order dispatch, customer concierge support, and delivery updates. We NEVER sell or rent data to third parties.</p>
+        </div>
+        <div class="policy-card">
+          <h3>3. Payment Privacy &amp; Encryption</h3>
+          <p>Transactions are encrypted end-to-end via 256-bit SSL protocols. Online payments are handled securely by Razorpay.</p>
+        </div>
+        <div class="policy-card">
+          <h3>4. Contacting Our Data Concierge</h3>
+          <p>If you wish to update or delete your customer account information, reach out to our concierge team at <a href="tel:+918655239282">+91 8655239282</a> or via WhatsApp.</p>
+        </div>
+      </div>
+    </section>`;
+  } else if (targetView === 'faq') {
+    content.innerHTML = `<section class="page-width inner-page faq-page">
+      ${sectionHeader('Help & Concierge', 'Frequently Asked Questions (FAQ)', 'Find answers to common questions about ordering, customisation, delivery & corporate gifting.')}
+      <div class="faq-container">
+        <div class="faq-accordion">
+          <div class="faq-item active">
+            <button class="faq-question"><span>How fast is delivery in Mumbai?</span><span class="material-symbols-outlined">expand_more</span></button>
+            <div class="faq-answer"><p>We offer <strong>One-Day Express Delivery Pan-Mumbai</strong> (including Thane and Navi Mumbai) for orders placed before 2:00 PM. Your hamper will be hand-delivered tomorrow evening by 7:00 PM.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question"><span>Do you deliver across India?</span><span class="material-symbols-outlined">expand_more</span></button>
+            <div class="faq-answer"><p>Yes! We deliver via air express courier partners across 19,000+ PIN codes in India. Estimated delivery time is 2 to 4 business days.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question"><span>Can I add a personalized handwritten gift note?</span><span class="material-symbols-outlined">expand_more</span></button>
+            <div class="faq-answer"><p>Absolutely! Every hamper comes with a complimentary gold-foil embossed greeting card. You can write your custom message during product selection or at checkout.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question"><span>What payment modes do you support?</span><span class="material-symbols-outlined">expand_more</span></button>
+            <div class="faq-answer"><p>We accept UPI (GPay, PhonePe, Paytm), Credit &amp; Debit Cards (Visa, Mastercard, RuPay), Net Banking across all major banks, and Cash on Delivery (COD).</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question"><span>What if the hamper items arrive damaged?</span><span class="material-symbols-outlined">expand_more</span></button>
+            <div class="faq-answer"><p>We have a 100% Transit-Safe Guarantee. Simply share a photo of the damaged package with our concierge within 24 hours on WhatsApp (+91 8655239282), and we will dispatch an instant free replacement!</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question"><span>Do you accept corporate or bulk custom hamper orders?</span><span class="material-symbols-outlined">expand_more</span></button>
+            <div class="faq-answer"><p>Yes! We specialize in custom corporate gifting, employee onboarding kits, and wedding bulk orders with custom company branding &amp; custom ribbon colors. Call or WhatsApp +91 8655239282 for bulk quotes.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question"><span>Are the gift boxes reusable?</span><span class="material-symbols-outlined">expand_more</span></button>
+            <div class="faq-answer"><p>Yes! All Supriszo hampers are packaged in heavy-duty, reusable rigid keepsake trunks or boxes designed to be kept for years to store keepsakes and personal treasures.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question"><span>How do I track my order status?</span><span class="material-symbols-outlined">expand_more</span></button>
+            <div class="faq-answer"><p>Enter your Supriszo Order ID (e.g. SPR-XXXXXX) on our <a href="pages.html?view=track">Track Order page</a> to trace real-time packing, dispatch, and courier tracking status.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>`;
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        item.classList.toggle('active');
+      });
+    });
   }
 
   if (pageExtras[targetView]) content.insertAdjacentHTML('beforeend', pageExtras[targetView]);
@@ -150,6 +284,7 @@ function hydrateProductDetailPage(prodId) {
     document.querySelector('#pageContent').innerHTML = `<section class="page-width inner-page"><div class="no-results-card" style="text-align:center; padding:48px 24px;"><h2>No product selected.</h2><a class="button button-dark" href="pages.html?view=hampers">Explore Catalog</a></div></section>`;
     return;
   }
+
   api(`/products/${prodId}`).then((product) => {
     const isOutOfStock = (product.stockQuantity !== undefined && product.stockQuantity <= 0);
     const stockMsg = isOutOfStock
@@ -158,41 +293,150 @@ function hydrateProductDetailPage(prodId) {
         ? `<span class="stock-tag low-stock"><span class="material-symbols-outlined">warning</span> Low Stock: Only ${product.stockQuantity} left</span>`
         : `<span class="stock-tag in-stock"><span class="material-symbols-outlined">check_circle</span> In Stock (${product.stockQuantity || 50} available)</span>`;
 
+    const catName = product.categoryId ? (product.categoryId.charAt(0).toUpperCase() + product.categoryId.slice(1).replace('-', ' ')) : 'Gift Hampers';
+
+    const price = product.price || 0;
+    const mrp = product.mrp || (price + 400);
+    const savings = mrp - price;
+    const discountPct = Math.round((savings / mrp) * 100);
+
+    const reviewsCount = product.reviews || 184;
+    const ratingScore = product.rating || 4.9;
+
+    const aboutBullets = [
+      {
+        icon: 'card_giftcard',
+        title: 'EXQUISITE GIFT CURATION',
+        text: `Thoughtfully composed featuring ${product.description || 'handcrafted treats and luxury keepsakes'}. Every item is selected to create an unboxing moment filled with joy.`
+      },
+      {
+        icon: 'inventory_2',
+        title: 'REUSABLE LUXURY KEEPSAKE CHEST',
+        text: 'Encased in a signature heavyweight rigid trunk with gold foil detailing, velvet lining, and raw silk ribbon finish that can be cherished forever.'
+      },
+      {
+        icon: 'edit_note',
+        title: 'COMPLIMENTARY GOLD-FOIL GIFT CARD',
+        text: 'Includes a complimentary gold-trimmed greeting card customized with your personal message written by our studio calligrapher.'
+      },
+      {
+        icon: 'eco',
+        title: '100% ARTISANAL & FRESHLY PACKED',
+        text: 'Crafted in small batches by artisan partners with 100% pure gourmet ingredients, free from artificial preservatives.'
+      },
+      {
+        icon: 'verified_user',
+        title: 'TRANSIT-SAFE GUARANTEE',
+        text: 'Double-boxed with shock-absorbent eco-friendly packaging ensuring 100% damage-free delivery anywhere in India.'
+      }
+    ];
+
+    const weightEst = price > 2000 ? '2.4 kg' : (price > 1400 ? '1.8 kg' : '1.2 kg');
+    const boxDimensions = price > 2000 ? '32.0 × 26.0 × 14.0 cm' : '28.0 × 22.0 × 12.0 cm';
+
+    const mockReviews = [
+      {
+        name: 'Ananya Sharma',
+        avatar: 'A',
+        stars: 5,
+        title: 'Unbelievable presentation! The recipient loved it!',
+        date: '3 days ago',
+        verified: true,
+        text: `Ordered the ${product.name} for a special surprise. The keepsake box looked even more stunning in person than on the site. The treats were fresh and delicious!`
+      },
+      {
+        name: 'Rohan Mehta',
+        avatar: 'R',
+        stars: 5,
+        title: 'Fast 1-day delivery in Mumbai & top tier quality',
+        date: '1 week ago',
+        verified: true,
+        text: `Impressed by the speedy delivery! The handwritten card with gold foil border was a really classy touch. Will definitely order again.`
+      },
+      {
+        name: 'Priyanka Nair',
+        avatar: 'P',
+        stars: 4,
+        title: 'Worth every rupee for a milestone gift',
+        date: '2 weeks ago',
+        verified: true,
+        text: `High quality rigid trunk box, beautifully tied with silk ribbon. Everything inside was intact and packaged with great care.`
+      }
+    ];
+
     document.querySelector('#pageContent').innerHTML = `
       <section class="page-width inner-page pdp-container">
+        <!-- Breadcrumb -->
         <div class="pdp-breadcrumb">
-          <a href="index.html">Home</a> &rsaquo; <a href="pages.html?view=hampers">Hampers</a> &rsaquo; <span>${product.name}</span>
+          <a href="index.html">Home</a> &rsaquo; 
+          <a href="pages.html?view=hampers">Hampers</a> &rsaquo; 
+          <a href="pages.html?view=hampers&search=${encodeURIComponent(product.categoryId || '')}">${catName}</a> &rsaquo; 
+          <span>${product.name}</span>
         </div>
+
         <div class="pdp-layout">
+          <!-- Gallery Column -->
           <div class="pdp-gallery">
             <div class="main-image-wrap">
               <img id="pdpMainImg" src="${product.image}" alt="${product.name}" onerror="this.src='images/bday-1.jpg'" />
               <span class="product-tag pdp-tag">${product.tag || 'Curated Keepsake'}</span>
             </div>
+            
+            <!-- Gallery Thumbnails -->
+            <div class="pdp-thumbnails">
+              <button type="button" class="pdp-thumb-btn active" data-src="${product.image}">
+                <img src="${product.image}" alt="Main View" onerror="this.src='images/bday-1.jpg'" />
+              </button>
+              <button type="button" class="pdp-thumb-btn" data-src="${product.image}">
+                <img src="${product.image}" alt="Detail View" style="filter: brightness(1.05) contrast(1.05);" onerror="this.src='images/bday-1.jpg'" />
+              </button>
+              <button type="button" class="pdp-thumb-btn" data-src="images/anniversary_romance_hamper.png">
+                <img src="images/anniversary_romance_hamper.png" alt="Box Presentation" onerror="this.src='images/bday-1.jpg'" />
+              </button>
+              <button type="button" class="pdp-thumb-btn" data-src="images/bday_hamper.png">
+                <img src="images/bday_hamper.png" alt="Gift Ribbon & Card" onerror="this.src='images/bday-1.jpg'" />
+              </button>
+            </div>
+
             <div class="pdp-trust-list">
               <div><span class="material-symbols-outlined">verified</span>100% Transit-Safe Assurance</div>
-              <div><span class="material-symbols-outlined">card_giftcard</span>Complimentary Gold-foil Gift Card</div>
-              <div><span class="material-symbols-outlined">eco</span>Eco-friendly Reusable Box</div>
+              <div><span class="material-symbols-outlined">card_giftcard</span>Complimentary Gold-foil Card</div>
+              <div><span class="material-symbols-outlined">eco</span>Eco Reusable Keepsake Box</div>
             </div>
           </div>
+
+          <!-- Product Details Column -->
           <div class="pdp-details">
-            <p class="eyebrow">${product.tag || 'Handcrafted Collection'}</p>
+            <div class="pdp-store-line">
+              <span class="material-symbols-outlined">storefront</span> Supriszo &amp; Co. Luxury Store
+            </div>
             <h1>${product.name}</h1>
+
             <div class="pdp-rating-row">
-              <span class="material-symbols-outlined">star</span> <strong>${product.rating || 4.9}</strong>
-              <span class="muted">(${product.reviews || 120} customer reviews)</span>
+              <div class="pdp-stars">
+                <span class="material-symbols-outlined">star</span>
+                <span class="material-symbols-outlined">star</span>
+                <span class="material-symbols-outlined">star</span>
+                <span class="material-symbols-outlined">star</span>
+                <span class="material-symbols-outlined">star</span>
+              </div>
+              <span class="pdp-rating-score">${ratingScore}</span>
+              <a href="#pdpReviewsSection" class="pdp-review-count">(${reviewsCount} global ratings)</a>
               ${stockMsg}
             </div>
+
             <div class="pdp-price-box">
-              <strong class="pdp-price">₹${(product.price || 0).toLocaleString('en-IN')}</strong>
-              <del class="pdp-mrp">₹${(product.mrp || product.price + 400).toLocaleString('en-IN')}</del>
-              <span class="pdp-discount">SAVE ₹${((product.mrp || product.price + 400) - product.price).toLocaleString('en-IN')}</span>
+              <strong class="pdp-price">₹${price.toLocaleString('en-IN')}</strong>
+              <del class="pdp-mrp">M.R.P.: ₹${mrp.toLocaleString('en-IN')}</del>
+              <span class="pdp-discount">${discountPct}% OFF</span>
+              <div class="pdp-tax-note">Inclusive of all taxes • Free Express Shipping on this hamper</div>
             </div>
-            <p class="pdp-desc">${product.description || 'Thoughtfully curated luxury gift hamper filled with handcrafted keepsakes, artisanal delicacies, and elegant presentation.'}</p>
+
+            <p class="pdp-desc">${product.description || 'Handcrafted luxury gift hamper filled with gourmet delicacies, signature keepsake box, and personalized gift presentation.'}</p>
 
             <!-- PIN Code Delivery Checker Widget -->
             <div class="pincode-checker-box">
-              <div class="pincode-header"><span class="material-symbols-outlined">local_shipping</span> <strong>Check Delivery Availability &amp; Date</strong></div>
+              <div class="pincode-header"><span class="material-symbols-outlined">local_shipping</span> <strong>Check Fast Delivery Availability</strong></div>
               <div class="pincode-input-row">
                 <input id="pincodeInput" type="text" maxlength="6" placeholder="Enter 6-digit PIN code (e.g. 400001)" />
                 <button type="button" id="btnCheckPincode" class="button button-dark small-btn">Check PIN</button>
@@ -205,7 +449,7 @@ function hydrateProductDetailPage(prodId) {
               <h3><span class="material-symbols-outlined">edit_note</span> Personalise This Hamper</h3>
               <p class="small-copy">Add a handwritten message card &amp; ribbon style specifically for this box.</p>
               <label>Gift Message Card (optional)
-                <textarea id="pdpMessage" rows="2" maxlength="300" placeholder="e.g. Happy Birthday! Wishing you joy and beautiful moments..."></textarea>
+                <textarea id="pdpMessage" rows="2" maxlength="300" placeholder="e.g. Happy Birthday! Wishing you endless joy and beautiful moments..."></textarea>
               </label>
               <div class="pdp-pers-grid">
                 <label>Silk Ribbon Color
@@ -238,13 +482,197 @@ function hydrateProductDetailPage(prodId) {
               <button id="pdpAddToCartBtn" class="button button-dark add-to-cart-lg" ${isOutOfStock ? 'disabled' : ''}>
                 <span class="material-symbols-outlined">shopping_bag</span> ${isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
               </button>
+              <button id="pdpBuyNowBtn" class="buy-now-btn" ${isOutOfStock ? 'disabled' : ''}>
+                <span class="material-symbols-outlined">bolt</span> Buy Now
+              </button>
             </div>
+          </div>
+        </div>
+
+        <!-- AMAZON-STYLE "ABOUT THIS ITEM" SECTION -->
+        <div class="pdp-section">
+          <div class="pdp-section-header">
+            <h2>About this item</h2>
+            <p>Detailed product feature breakdown and artisanal crafting standards</p>
+          </div>
+          <ul class="pdp-about-list">
+            ${aboutBullets.map(b => `
+              <li>
+                <span class="material-symbols-outlined bullet-icon">${b.icon}</span>
+                <div><strong>${b.title}:</strong> ${b.text}</div>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+
+        <!-- AMAZON-STYLE PRODUCT SPECIFICATIONS TABLE -->
+        <div class="pdp-section">
+          <div class="pdp-section-header">
+            <h2>Product Specifications &amp; Technical Details</h2>
+            <p>Complete box dimensions, materials, storage instructions &amp; origin</p>
+          </div>
+          <div class="pdp-specs-grid">
+            <div class="spec-item">
+              <strong>Brand</strong>
+              <span>Supriszo &amp; Co. Luxury Hampers</span>
+            </div>
+            <div class="spec-item">
+              <strong>Hamper Style &amp; Material</strong>
+              <span>Heavyweight Rigid Keepsake Trunk / Satin Ribbon</span>
+            </div>
+            <div class="spec-item">
+              <strong>Box Dimensions (L × W × H)</strong>
+              <span>${boxDimensions}</span>
+            </div>
+            <div class="spec-item">
+              <strong>Net Weight</strong>
+              <span>~${weightEst}</span>
+            </div>
+            <div class="spec-item">
+              <strong>Included Components</strong>
+              <span>${product.description || 'Artisanal Keepsakes & Treats'}, Foil Card &amp; Seal</span>
+            </div>
+            <div class="spec-item">
+              <strong>Shelf Life</strong>
+              <span>60 Days from dispatch date</span>
+            </div>
+            <div class="spec-item">
+              <strong>Country of Origin</strong>
+              <span>India (Handcrafted in Mumbai Studio)</span>
+            </div>
+            <div class="spec-item">
+              <strong>Suitable For</strong>
+              <span>${catName} &amp; Milestone Celebrations</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- AMAZON-STYLE CUSTOMER REVIEWS & RATINGS SECTION -->
+        <div class="pdp-section" id="pdpReviewsSection">
+          <div class="pdp-section-header">
+            <h2>Customer Reviews &amp; Ratings</h2>
+            <p>Verified purchase feedback and rating distribution from real customers</p>
+          </div>
+
+          <div class="reviews-dashboard">
+            <div class="rating-score-box">
+              <div class="score-number">${ratingScore}</div>
+              <div class="score-stars">
+                <span class="material-symbols-outlined">star</span>
+                <span class="material-symbols-outlined">star</span>
+                <span class="material-symbols-outlined">star</span>
+                <span class="material-symbols-outlined">star</span>
+                <span class="material-symbols-outlined">star</span>
+              </div>
+              <div class="score-count">${reviewsCount} global ratings</div>
+            </div>
+
+            <div class="rating-bars-box">
+              <div class="histogram-row">
+                <span class="star-lbl">5 star</span>
+                <div class="histogram-bar-track"><div class="histogram-bar-fill" style="width: 86%;"></div></div>
+                <span class="pct-lbl">86%</span>
+              </div>
+              <div class="histogram-row">
+                <span class="star-lbl">4 star</span>
+                <div class="histogram-bar-track"><div class="histogram-bar-fill" style="width: 10%;"></div></div>
+                <span class="pct-lbl">10%</span>
+              </div>
+              <div class="histogram-row">
+                <span class="star-lbl">3 star</span>
+                <div class="histogram-bar-track"><div class="histogram-bar-fill" style="width: 3%;"></div></div>
+                <span class="pct-lbl">3%</span>
+              </div>
+              <div class="histogram-row">
+                <span class="star-lbl">2 star</span>
+                <div class="histogram-bar-track"><div class="histogram-bar-fill" style="width: 1%;"></div></div>
+                <span class="pct-lbl">1%</span>
+              </div>
+              <div class="histogram-row">
+                <span class="star-lbl">1 star</span>
+                <div class="histogram-bar-track"><div class="histogram-bar-fill" style="width: 0%;"></div></div>
+                <span class="pct-lbl">0%</span>
+              </div>
+            </div>
+
+            <div class="write-review-box">
+              <h4>Review this product</h4>
+              <p>Share your experience with other hamper shoppers</p>
+              <button type="button" class="btn-write-review" id="btnToggleReviewForm">
+                Write a Customer Review
+              </button>
+            </div>
+          </div>
+
+          <!-- WRITE REVIEW FORM (Collapsible/Interactive) -->
+          <div id="reviewFormCard" class="review-form-card" style="display: none;">
+            <h3>Write a Customer Review</h3>
+            <div class="star-rating-select" id="starRatingSelect">
+              <span class="material-symbols-outlined selected" data-val="1">star</span>
+              <span class="material-symbols-outlined selected" data-val="2">star</span>
+              <span class="material-symbols-outlined selected" data-val="3">star</span>
+              <span class="material-symbols-outlined selected" data-val="4">star</span>
+              <span class="material-symbols-outlined selected" data-val="5">star</span>
+            </div>
+            <div class="review-form-grid">
+              <input id="reviewAuthor" placeholder="Your Name (e.g. Aarav Patel)" required />
+              <input id="reviewTitle" placeholder="Review Headline (e.g. Magnificent gifting experience)" required />
+            </div>
+            <textarea id="reviewBody" rows="3" placeholder="Write your detailed review about packaging, items, delivery..." required></textarea>
+            <div style="margin-top: 14px; display: flex; gap: 10px;">
+              <button type="button" id="btnSubmitReview" class="button button-dark">Submit Review</button>
+              <button type="button" id="btnCancelReview" class="button button-light">Cancel</button>
+            </div>
+          </div>
+
+          <!-- VERIFIED REVIEWS LIST -->
+          <div class="reviews-list" id="pdpReviewsList">
+            ${mockReviews.map(r => `
+              <div class="review-card">
+                <div class="review-user-row">
+                  <div class="user-avatar">${r.avatar}</div>
+                  <div class="user-name-wrap">
+                    <strong>${r.name}</strong>
+                    <span class="verified-tag"><span class="material-symbols-outlined" style="font-size:13px;">check_circle</span> Verified Purchase</span>
+                  </div>
+                  <span class="review-date">${r.date}</span>
+                </div>
+                <div class="review-rating-row">
+                  <div class="stars">
+                    ${'<span class="material-symbols-outlined">star</span>'.repeat(r.stars)}
+                  </div>
+                  <span class="review-title">${r.title}</span>
+                </div>
+                <p class="review-body">${r.text}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- RELATED HAMPERS SECTION -->
+        <div class="pdp-section" id="pdpRelatedSection">
+          <div class="pdp-section-header">
+            <h2>Customers Who Viewed This Also Viewed</h2>
+            <p>Explore complementary gift hampers from our curated collection</p>
+          </div>
+          <div id="pdpRelatedGrid" class="product-grid" style="grid-template-columns: repeat(4, 1fr);">
+            <p class="muted">Loading recommended hampers...</p>
           </div>
         </div>
       </section>
     `;
 
     protectImages(document.querySelector('.pdp-container'));
+
+    // Bind Gallery Thumbnails
+    document.querySelectorAll('.pdp-thumb-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.pdp-thumb-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const mainImg = document.querySelector('#pdpMainImg');
+        if (mainImg) mainImg.src = btn.dataset.src;
+      });
+    });
 
     // Pincode checker logic
     document.querySelector('#btnCheckPincode')?.addEventListener('click', () => {
@@ -276,21 +704,109 @@ function hydrateProductDetailPage(prodId) {
     });
 
     // Add to cart logic
-    document.querySelector('#pdpAddToCartBtn')?.addEventListener('click', () => {
+    const handleAddToCart = async () => {
       if (isOutOfStock) return;
       const pers = {
         message: document.querySelector('#pdpMessage').value.trim(),
         ribbon: document.querySelector('#pdpRibbon').value,
         occasion: document.querySelector('#pdpOccasion').value
       };
-      api('/cart/items', {
+      return api('/cart/items', {
         method: 'POST',
         body: JSON.stringify({ productId: product.id, quantity: qty, personalisation: pers })
       }).then((cart) => {
         updateCartBadge(cart);
         showToast(`${product.name} added to your basket!`);
+        return cart;
       }).catch(err => showToast(err.message));
+    };
+
+    document.querySelector('#pdpAddToCartBtn')?.addEventListener('click', handleAddToCart);
+
+    // Buy Now button logic (adds to cart & redirects directly to checkout)
+    document.querySelector('#pdpBuyNowBtn')?.addEventListener('click', async () => {
+      const cart = await handleAddToCart();
+      if (cart) {
+        window.location.href = 'pages.html?view=checkout';
+      }
     });
+
+    // Interactive Review Form Logic
+    const reviewFormCard = document.querySelector('#reviewFormCard');
+    document.querySelector('#btnToggleReviewForm')?.addEventListener('click', () => {
+      reviewFormCard.style.display = reviewFormCard.style.display === 'none' ? 'block' : 'none';
+    });
+    document.querySelector('#btnCancelReview')?.addEventListener('click', () => {
+      reviewFormCard.style.display = 'none';
+    });
+
+    let selectedStarRating = 5;
+    const starSelect = document.querySelectorAll('#starRatingSelect span');
+    starSelect.forEach(star => {
+      star.addEventListener('click', () => {
+        selectedStarRating = Number(star.dataset.val);
+        starSelect.forEach(s => {
+          const val = Number(s.dataset.val);
+          s.classList.toggle('selected', val <= selectedStarRating);
+        });
+      });
+    });
+
+    document.querySelector('#btnSubmitReview')?.addEventListener('click', () => {
+      const author = document.querySelector('#reviewAuthor').value.trim();
+      const title = document.querySelector('#reviewTitle').value.trim();
+      const body = document.querySelector('#reviewBody').value.trim();
+
+      if (!author || !title || !body) {
+        showToast('Please fill out all review fields');
+        return;
+      }
+
+      const newReviewHtml = `
+        <div class="review-card" style="border: 1px solid var(--copper); background: #fffdf5;">
+          <div class="review-user-row">
+            <div class="user-avatar" style="background: var(--copper);">${author.charAt(0).toUpperCase()}</div>
+            <div class="user-name-wrap">
+              <strong>${author}</strong>
+              <span class="verified-tag"><span class="material-symbols-outlined" style="font-size:13px;">check_circle</span> Verified Purchase</span>
+            </div>
+            <span class="review-date">Just now</span>
+          </div>
+          <div class="review-rating-row">
+            <div class="stars">
+              ${'<span class="material-symbols-outlined">star</span>'.repeat(selectedStarRating)}
+            </div>
+            <span class="review-title">${title}</span>
+          </div>
+          <p class="review-body">${body}</p>
+        </div>
+      `;
+
+      document.querySelector('#pdpReviewsList').insertAdjacentHTML('afterbegin', newReviewHtml);
+      showToast('Thank you! Your customer review has been posted.');
+      reviewFormCard.style.display = 'none';
+      document.querySelector('#reviewAuthor').value = '';
+      document.querySelector('#reviewTitle').value = '';
+      document.querySelector('#reviewBody').value = '';
+    });
+
+    // Hydrate Related Hampers
+    api('/products').then(allProducts => {
+      const relGrid = document.querySelector('#pdpRelatedGrid');
+      if (!relGrid) return;
+      const related = allProducts.filter(p => p.id !== product.id).slice(0, 4);
+      if (!related.length) {
+        document.querySelector('#pdpRelatedSection').style.display = 'none';
+        return;
+      }
+      relGrid.innerHTML = related.map(productCardFromObject).join('');
+      protectImages(relGrid);
+      bindPageActions();
+    }).catch(() => {
+      const relSec = document.querySelector('#pdpRelatedSection');
+      if (relSec) relSec.style.display = 'none';
+    });
+
   }).catch(err => {
     document.querySelector('#pageContent').innerHTML = `<section class="page-width inner-page"><div class="no-results-card" style="text-align:center; padding:48px 24px;"><h2>Hamper not found.</h2><p>${err.message}</p><a class="button button-dark" href="pages.html?view=hampers">Back to Catalog</a></div></section>`;
   });
