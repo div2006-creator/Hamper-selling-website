@@ -533,19 +533,6 @@
       "description": "Matte black coffee tumbler, roasted pistachios, dark cacao bark and leather pouch.",
       "rating": 4.9,
       "reviews": 150
-    },
-    {
-      "id": "him-6",
-      "name": "Midnight Gentleman's Executive Trunk",
-      "shortName": "Midnight Gentleman's Trunk",
-      "categoryId": "for-him",
-      "tag": "Executive Trunk",
-      "price": 2799,
-      "mrp": 3499,
-      "image": "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=800&q=80",
-      "description": "Brass cufflinks, single-estate dark coffee, Mamra almonds and wooden keepsake box.",
-      "rating": 5,
-      "reviews": 190
     }
   ],
   "categories": [

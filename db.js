@@ -170,6 +170,12 @@ async function getProducts({ search = '', categoryId = null, activeOnly = true }
       ...p,
       stockQuantity: p.stockQuantity !== undefined ? p.stockQuantity : (p.stock_quantity !== undefined ? p.stock_quantity : 50)
     }));
+    if (activeOnly) {
+      items = items.filter(p => p.isActive !== false);
+    }
+    if (categoryId) {
+      items = items.filter(p => p.categoryId === categoryId);
+    }
     if (search) {
       const q = search.toLowerCase();
       items = items.filter(p => p.name.toLowerCase().includes(q) || (p.description && p.description.toLowerCase().includes(q)));
@@ -257,11 +263,12 @@ async function updateProduct(id, productData) {
 }
 
 async function deleteProduct(id) {
+  const cleanId = String(id || '').trim().toLowerCase();
   if (usePostgres) {
-    const res = await pool.query('DELETE FROM products WHERE id = $1 RETURNING *', [id]);
+    const res = await pool.query('DELETE FROM products WHERE LOWER(id) = $1 RETURNING *', [cleanId]);
     return res.rows.length > 0;
   } else {
-    const index = fallbackStore.products.findIndex(p => p.id === id);
+    const index = fallbackStore.products.findIndex(p => String(p.id || '').trim().toLowerCase() === cleanId);
     if (index === -1) return false;
     fallbackStore.products.splice(index, 1);
     await saveFallbackData();
