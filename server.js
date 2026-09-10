@@ -270,13 +270,111 @@ app.post('/api/orders', rateLimit(15, 60000), express.json(), async (request, re
   }
 });
 
-// Razorpay Integration Endpoint
+// Razorpay Integration Endpoints
 app.get('/api/integrations/razorpay', async (_request, response) => {
   response.json({
-    enabled: true,
-    keyId: process.env.RAZORPAY_KEY_ID || 'rzp_test_TYQ59JP3lkm7az',
+    enabled: Boolean(process.env.RAZORPAY_KEY_ID),
+    keyId: process.env.RAZORPAY_KEY_ID || null,
     webhookUrl: process.env.RAZORPAY_WEBHOOK_URL || null
   });
+});
+
+app.post('/api/razorpay/create-order', express.json(), async (request, response) => {
+  try {
+    const sessionId = request.headers['x-session-id'] || 'default_guest';
+    const cart = await db.getCart(sessionId);
+    if (!cart.items || !cart.items.length) {
+      return response.status(400).json({ error: 'Your shopping basket is empty' });
+    }
+
+    const keyId = process.env.RAZORPAY_KEY_ID;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+    if (!keyId || !keySecret) {
+      return response.status(500).json({ error: 'Razorpay payment gateway credentials not configured on server.' });
+    }
+
+    const amountInPaise = Math.round((cart.total || 0) * 100);
+    if (amountInPaise < 100) {
+      return response.status(400).json({ error: 'Order total must be at least ₹1' });
+    }
+
+    const auth = Buffer.from(`${keyId}:${keySecret}`).toString('base64');
+    const rzpResponse = await fetch('https://api.razorpay.com/v1/orders', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        amount: amountInPaise,
+        currency: 'INR',
+        receipt: `rcpt_${Date.now()}`,
+        notes: {
+          session_id: sessionId,
+          customer_name: request.body?.customer?.name || ''
+        }
+      })
+    });
+
+    const rzpData = await rzpResponse.json();
+    if (!rzpResponse.ok) {
+      throw new Error(rzpData.error?.description || 'Failed to create Razorpay payment order');
+    }
+
+    response.json({
+      keyId,
+      razorpayOrderId: rzpData.id,
+      amount: rzpData.amount,
+      currency: rzpData.currency
+    });
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/razorpay/verify-payment', express.json(), async (request, response) => {
+  try {
+    const sessionId = request.headers['x-session-id'] || 'default_guest';
+    const cart = await db.getCart(sessionId);
+    if (!cart.items || !cart.items.length) {
+      return response.status(400).json({ error: 'Cart is empty' });
+    }
+
+    const { razorpay_payment_id, razorpay_order_id, razorpay_signature, customer, paymentMethod } = request.body || {};
+
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    if (keySecret && razorpay_signature && razorpay_order_id && razorpay_payment_id) {
+      const generatedSignature = crypto
+        .createHmac('sha256', keySecret)
+        .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+        .digest('hex');
+
+      if (generatedSignature !== razorpay_signature) {
+        return response.status(400).json({ error: 'Razorpay payment verification signature mismatch' });
+      }
+    }
+
+    const orderData = {
+      id: `SPR-${crypto.randomBytes(3).toString('hex').toUpperCase()}`,
+      customer: { name: customer.name, phone: customer.phone, address: customer.address },
+      paymentMethod: paymentMethod ? `razorpay_${paymentMethod}` : 'razorpay_online',
+      items: cart.items.map(({ product, quantity, lineTotal, personalisation }) => ({
+        productId: product.id,
+        name: product.name,
+        quantity,
+        personalisation: personalisation || {},
+        lineTotal
+      })),
+      total: cart.total
+    };
+
+    const order = await db.createOrder(orderData);
+    await db.clearCart(sessionId);
+    response.status(201).json({ order, cart: await db.getCart(sessionId) });
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
 });
 
 app.post('/api/razorpay/webhook', express.raw({ type: 'application/json' }), async (request, response) => {

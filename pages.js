@@ -535,20 +535,90 @@ function hydrateCheckoutPage() {
       <div class="summary-row total"><span>Total</span><strong>₹${cart.total.toLocaleString('en-IN')}</strong></div>`;
     }
 
-    document.querySelector('#checkoutForm')?.addEventListener('submit', (event) => {
+    document.querySelector('#checkoutForm')?.addEventListener('submit', async (event) => {
       event.preventDefault();
+      const submitBtn = event.target.querySelector('button[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
+
       const customer = {
         name: document.querySelector('#checkoutName').value.trim(),
         phone: document.querySelector('#checkoutPhone').value.trim(),
         address: `${document.querySelector('#checkoutAddress').value.trim()}, ${document.querySelector('#checkoutCity').value.trim()} - ${document.querySelector('#checkoutPin').value.trim()}`
       };
       const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-      api('/orders', { method: 'POST', body: JSON.stringify({ customer, paymentMethod }) })
-        .then(({ order }) => {
-          showToast(`Order ${order.id} confirmed! Thank you.`);
-          setTimeout(() => { window.location.href = `pages.html?view=track&id=${order.id}`; }, 1000);
-        })
-        .catch((error) => showToast(error.message));
+
+      if (paymentMethod === 'cod') {
+        api('/orders', { method: 'POST', body: JSON.stringify({ customer, paymentMethod }) })
+          .then(({ order }) => {
+            showToast(`Order ${order.id} confirmed! Thank you.`);
+            setTimeout(() => { window.location.href = `pages.html?view=track&id=${order.id}`; }, 1000);
+          })
+          .catch((error) => {
+            if (submitBtn) submitBtn.disabled = false;
+            showToast(error.message);
+          });
+      } else {
+        try {
+          showToast('Initializing secure Razorpay payment...');
+          const rzpOrder = await api('/razorpay/create-order', {
+            method: 'POST',
+            body: JSON.stringify({ customer, paymentMethod })
+          });
+
+          if (typeof Razorpay === 'undefined') {
+            throw new Error('Razorpay Checkout SDK failed to load. Please check your network connection.');
+          }
+
+          const options = {
+            key: rzpOrder.keyId,
+            amount: rzpOrder.amount,
+            currency: rzpOrder.currency,
+            name: 'Supriszo & Co.',
+            description: 'Handcrafted Luxury Gift Hampers',
+            order_id: rzpOrder.razorpayOrderId,
+            prefill: {
+              name: customer.name,
+              contact: customer.phone
+            },
+            theme: { color: '#a8603d' },
+            handler: function (response) {
+              showToast('Verifying payment authorization...');
+              api('/razorpay/verify-payment', {
+                method: 'POST',
+                body: JSON.stringify({
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_signature: response.razorpay_signature,
+                  customer,
+                  paymentMethod
+                })
+              }).then(({ order }) => {
+                showToast(`Payment successful! Order ${order.id} confirmed.`);
+                setTimeout(() => { window.location.href = `pages.html?view=track&id=${order.id}`; }, 1000);
+              }).catch(err => {
+                if (submitBtn) submitBtn.disabled = false;
+                showToast(err.message);
+              });
+            },
+            modal: {
+              ondismiss: function() {
+                if (submitBtn) submitBtn.disabled = false;
+                showToast('Payment window closed.');
+              }
+            }
+          };
+
+          const rzp = new Razorpay(options);
+          rzp.on('payment.failed', function (resp) {
+            if (submitBtn) submitBtn.disabled = false;
+            showToast(`Payment failed: ${resp.error?.description || 'Declined'}`);
+          });
+          rzp.open();
+        } catch (error) {
+          if (submitBtn) submitBtn.disabled = false;
+          showToast(error.message);
+        }
+      }
     });
   }).catch((error) => showToast(error.message));
 }
