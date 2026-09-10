@@ -280,6 +280,9 @@ function render(view) {
 }
 
 function hydrateProductDetailPage(prodId) {
+  // Remove existing sticky buy bar if any
+  document.querySelector('#stickyPdpBar')?.remove();
+
   if (!prodId) {
     document.querySelector('#pageContent').innerHTML = `<section class="page-width inner-page"><div class="no-results-card" style="text-align:center; padding:48px 24px;"><h2>No product selected.</h2><a class="button button-dark" href="pages.html?view=hampers">Explore Catalog</a></div></section>`;
     return;
@@ -505,6 +508,40 @@ function hydrateProductDetailPage(prodId) {
           </ul>
         </div>
 
+        <!-- AMAZON A+ BRAND SHOWCASE SECTION (FROM THE MANUFACTURER) -->
+        <div class="pdp-aplus-section">
+          <div class="aplus-hero-banner">
+            <div>
+              <h3>Supriszo &amp; Co. Luxury Gifting Studio</h3>
+              <p>Every Supriszo box is composed by master gift curators in our Mumbai studio. We combine small-batch delicacies with heirloom-quality keepsakes.</p>
+            </div>
+            <span class="aplus-brand-tag">Crafted in Mumbai</span>
+          </div>
+          <div class="aplus-grid">
+            <div class="aplus-card">
+              <img class="aplus-card-img" src="${product.image}" alt="${product.name}" onerror="this.src='images/bday-1.jpg'" />
+              <div class="aplus-card-body">
+                <h4>Heavyweight Rigid Keepsake Box</h4>
+                <p>Built with 1200 GSM rigid recycled board, gold foil embossing, and velvet lining. Designed to be kept as a memory box long after the occasion.</p>
+              </div>
+            </div>
+            <div class="aplus-card">
+              <img class="aplus-card-img" src="images/coffee_truffle_hamper.png" alt="Artisanal Sourcing" onerror="this.src='images/bday-1.jpg'" />
+              <div class="aplus-card-body">
+                <h4>Small-Batch Artisanal Sourcing</h4>
+                <p>We work directly with 32 independent makers across India to source single-origin coffees, belgian truffles, and brass keepsakes.</p>
+              </div>
+            </div>
+            <div class="aplus-card">
+              <img class="aplus-card-img" src="images/anniversary_romance_hamper.png" alt="Unboxing Experience" onerror="this.src='images/bday-1.jpg'" />
+              <div class="aplus-card-body">
+                <h4>Considered Unboxing Ceremony</h4>
+                <p>Tied with terracotta raw silk ribbons, cushioned with eco-friendly paper shredding, and paired with a gold foil handwritten message card.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- AMAZON-STYLE PRODUCT SPECIFICATIONS TABLE -->
         <div class="pdp-section">
           <div class="pdp-section-header">
@@ -544,6 +581,21 @@ function hydrateProductDetailPage(prodId) {
               <strong>Suitable For</strong>
               <span>${catName} &amp; Milestone Celebrations</span>
             </div>
+          </div>
+        </div>
+
+        <!-- AMAZON-STYLE COMPARISON TABLE SECTION -->
+        <div class="pdp-section" id="pdpCompareSection">
+          <div class="pdp-section-header">
+            <h2>Compare with Similar Hampers</h2>
+            <p>See how ${product.name} compares with other popular gift boxes in our collection</p>
+          </div>
+          <div class="pdp-compare-table-wrap">
+            <table class="pdp-compare-table">
+              <tbody id="pdpCompareBody">
+                <!-- Dynamically populated comparison rows -->
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -660,6 +712,25 @@ function hydrateProductDetailPage(prodId) {
           </div>
         </div>
       </section>
+
+      <!-- STICKY FLOATING ADD TO CART BAR -->
+      <div class="sticky-pdp-bar" id="stickyPdpBar">
+        <div class="page-width sticky-bar-inner">
+          <div class="sticky-bar-info">
+            <img src="${product.image}" alt="${product.name}" onerror="this.src='images/bday-1.jpg'" />
+            <div class="sticky-bar-text">
+              <strong>${product.name}</strong>
+              <small>⭐ ${ratingScore} (${reviewsCount} reviews) • Supriszo &amp; Co. Luxury</small>
+            </div>
+          </div>
+          <div class="sticky-bar-actions">
+            <span class="sticky-bar-price">₹${price.toLocaleString('en-IN')}</span>
+            <button type="button" class="button button-dark" id="stickyAddToCartBtn" ${isOutOfStock ? 'disabled' : ''}>
+              <span class="material-symbols-outlined">shopping_bag</span> ${isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+            </button>
+          </div>
+        </div>
+      </div>
     `;
 
     protectImages(document.querySelector('.pdp-container'));
@@ -673,6 +744,18 @@ function hydrateProductDetailPage(prodId) {
         if (mainImg) mainImg.src = btn.dataset.src;
       });
     });
+
+    // Sticky bar scroll trigger
+    const onScrollPdp = () => {
+      const bar = document.querySelector('#stickyPdpBar');
+      const buyActions = document.querySelector('.pdp-actions');
+      if (bar && buyActions) {
+        const rect = buyActions.getBoundingClientRect();
+        if (rect.bottom < 0) bar.classList.add('show');
+        else bar.classList.remove('show');
+      }
+    };
+    window.addEventListener('scroll', onScrollPdp);
 
     // Pincode checker logic
     document.querySelector('#btnCheckPincode')?.addEventListener('click', () => {
@@ -722,6 +805,7 @@ function hydrateProductDetailPage(prodId) {
     };
 
     document.querySelector('#pdpAddToCartBtn')?.addEventListener('click', handleAddToCart);
+    document.querySelector('#stickyAddToCartBtn')?.addEventListener('click', handleAddToCart);
 
     // Buy Now button logic (adds to cart & redirects directly to checkout)
     document.querySelector('#pdpBuyNowBtn')?.addEventListener('click', async () => {
@@ -790,8 +874,56 @@ function hydrateProductDetailPage(prodId) {
       document.querySelector('#reviewBody').value = '';
     });
 
-    // Hydrate Related Hampers
+    // Hydrate Comparison Table & Related Hampers
     api('/products').then(allProducts => {
+      // Comparison table
+      const compareBody = document.querySelector('#pdpCompareBody');
+      if (compareBody) {
+        const compareItems = [product, ...allProducts.filter(p => p.id !== product.id).slice(0, 3)];
+        compareBody.innerHTML = `
+          <tr>
+            <th>Product</th>
+            ${compareItems.map(p => `
+              <td class="compare-product-header">
+                <img src="${p.image}" alt="${p.name}" onerror="this.src='images/bday-1.jpg'" />
+                <strong>${p.name}</strong>
+              </td>
+            `).join('')}
+          </tr>
+          <tr>
+            <th>Rating</th>
+            ${compareItems.map(p => `<td>⭐ ${p.rating || 4.8} (${p.reviews || 100})</td>`).join('')}
+          </tr>
+          <tr>
+            <th>Price</th>
+            ${compareItems.map(p => `<td><strong>₹${(p.price || 0).toLocaleString('en-IN')}</strong></td>`).join('')}
+          </tr>
+          <tr>
+            <th>Keepsake Trunk</th>
+            ${compareItems.map(p => `<td>${p.price > 1800 ? 'Velvet Gold Trunk' : 'Rigid Keepsake Box'}</td>`).join('')}
+          </tr>
+          <tr>
+            <th>Contents</th>
+            ${compareItems.map(p => `<td>${(p.description || '').substring(0, 60)}...</td>`).join('')}
+          </tr>
+          <tr>
+            <th>Delivery Speed</th>
+            ${compareItems.map(() => `<td>⚡ 1-Day Mumbai / Express India</td>`).join('')}
+          </tr>
+          <tr>
+            <th>Action</th>
+            ${compareItems.map(p => `
+              <td>
+                <a class="button button-dark" style="font-size:10px; padding:6px 10px;" href="pages.html?view=product&amp;product=${p.id}">
+                  ${p.id === product.id ? 'Current Item' : 'View Hamper'}
+                </a>
+              </td>
+            `).join('')}
+          </tr>
+        `;
+      }
+
+      // Related grid
       const relGrid = document.querySelector('#pdpRelatedGrid');
       if (!relGrid) return;
       const related = allProducts.filter(p => p.id !== product.id).slice(0, 4);
