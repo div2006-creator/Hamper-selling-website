@@ -429,6 +429,27 @@ function hydrateCategoryCatalog() {
   api('/categories').then((categories) => {
     const catalog = document.querySelector('#categoryCatalog');
     if (!catalog) return;
+
+    // Dynamically render Category Filter Bar pills
+    const filterBar = document.querySelector('#categoryFilterBar');
+    if (filterBar) {
+      const emojiMap = {
+        'birthday': '🎂',
+        'anniversary': '💍',
+        'wedding': '👑',
+        'festivals': '🪔',
+        'corporate-gifting': '💼',
+        'for-her': '🌹',
+        'for-him': '🎩'
+      };
+      let filterBtnsHtml = `<button class="cat-filter-btn active" data-filter="all">All Hampers</button>`;
+      categories.forEach(cat => {
+        const icon = emojiMap[cat.id] || '🎁';
+        filterBtnsHtml += `<button class="cat-filter-btn" data-filter="${cat.id}">${icon} ${cat.name}</button>`;
+      });
+      filterBar.innerHTML = filterBtnsHtml;
+    }
+
     catalog.innerHTML = categories.map((category) => `
       <section class="category-product-section" id="category-${category.id}">
         <div class="category-heading">
@@ -719,6 +740,30 @@ function bindSearch() {
     handleSearchSubmit();
   });
 }
+
+async function loadStorefrontSettings() {
+  try {
+    const settings = await api('/settings');
+    const annEl = document.querySelector('.announcement span');
+    if (annEl && settings.announcement_text) {
+      annEl.innerHTML = `<span class="material-symbols-outlined">bolt</span> ${settings.announcement_text}`;
+    }
+    const ribbonEl = document.querySelector('.delivery-ribbon span');
+    if (ribbonEl && settings.banner_shipping_text) {
+      ribbonEl.innerHTML = `<span class="material-symbols-outlined">local_shipping</span><strong>${settings.banner_shipping_text}</strong>`;
+    }
+    const waLink = document.querySelector('.announcement-links a[href*="wa.me"]');
+    if (waLink && settings.helpline_phone) {
+      const cleanPhone = settings.helpline_phone.replace(/[^0-9]/g, '');
+      waLink.href = `https://wa.me/${cleanPhone}`;
+      waLink.textContent = `WhatsApp: ${settings.helpline_phone}`;
+    }
+  } catch (err) {
+    console.warn('Using default storefront settings');
+  }
+}
+
+loadStorefrontSettings();
 
 const view = new URLSearchParams(window.location.search).get('view') || 'hampers';
 render(view);

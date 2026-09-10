@@ -168,14 +168,17 @@ function renderProductsTable(products) {
         </div>
       </td>
       <td>${p.categoryId || 'General'}</td>
-      <td><span class="pill tag-pill">${p.tag || 'Curated'}</span></td>
+      <td>
+        <span class="pill tag-pill">${p.tag || 'Curated'}</span>
+        ${p.isBestseller ? '<span class="pill tag-pill" style="background:#fff3e0; color:#e65100; font-weight:bold;">⭐ Bestseller</span>' : ''}
+      </td>
       <td><strong>₹${p.price.toLocaleString('en-IN')}</strong></td>
       <td><del class="muted">₹${p.mrp ? p.mrp.toLocaleString('en-IN') : '-'}</del></td>
       <td>${stockPill}</td>
       <td>⭐ ${p.rating || 4.8} <small class="muted">(${p.reviews || 0})</small></td>
       <td>
-        <button class="pill ${p.isActive ? 'status-active' : 'status-inactive'}" onclick="toggleProductActive('${p.id}', ${!p.isActive})" style="border:none; cursor:pointer;">
-          ${p.isActive ? 'Active' : 'Hidden'}
+        <button class="pill ${p.isActive !== false ? 'status-active' : 'status-inactive'}" onclick="toggleProductActive('${p.id}', ${p.isActive === false})" style="border:none; cursor:pointer;">
+          ${p.isActive !== false ? 'Active' : 'Hidden'}
         </button>
       </td>
       <td>
@@ -226,6 +229,8 @@ function openProductModal(productId = null) {
   const modal = document.querySelector('#productModal');
   const form = document.querySelector('#productForm');
   const title = document.querySelector('#modalProductTitle');
+  const previewBox = document.querySelector('#modalProdImagePreviewBox');
+  const previewImg = document.querySelector('#modalProdImagePreview');
   form.reset();
 
   // Populate categories dropdown
@@ -249,11 +254,21 @@ function openProductModal(productId = null) {
       document.querySelector('#modalProdDesc').value = p.description || '';
       document.querySelector('#modalProdRating').value = p.rating || 4.8;
       document.querySelector('#modalProdReviews').value = p.reviews || 100;
+      document.querySelector('#modalProdBestseller').checked = Boolean(p.isBestseller);
+      document.querySelector('#modalProdActive').checked = p.isActive !== false;
+
+      if (p.image && previewBox && previewImg) {
+        previewImg.src = p.image;
+        previewBox.style.display = 'block';
+      }
     }
   } else {
     title.textContent = 'Add New Gift Hamper';
     document.querySelector('#modalProductId').value = '';
     document.querySelector('#modalProdStock').value = 50;
+    document.querySelector('#modalProdBestseller').checked = false;
+    document.querySelector('#modalProdActive').checked = true;
+    if (previewBox) previewBox.style.display = 'none';
   }
 
   modal.style.display = 'grid';
@@ -262,6 +277,19 @@ function openProductModal(productId = null) {
 function closeProductModal() {
   document.querySelector('#productModal').style.display = 'none';
 }
+
+// Live Image URL Preview Listener
+document.querySelector('#modalProdImage')?.addEventListener('input', (e) => {
+  const url = e.target.value.trim();
+  const box = document.querySelector('#modalProdImagePreviewBox');
+  const img = document.querySelector('#modalProdImagePreview');
+  if (url && box && img) {
+    img.src = url;
+    box.style.display = 'block';
+  } else if (box) {
+    box.style.display = 'none';
+  }
+});
 
 document.querySelector('#productForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -277,7 +305,9 @@ document.querySelector('#productForm')?.addEventListener('submit', async (e) => 
     image: document.querySelector('#modalProdImage').value.trim(),
     description: document.querySelector('#modalProdDesc').value.trim(),
     rating: Number(document.querySelector('#modalProdRating').value),
-    reviews: Number(document.querySelector('#modalProdReviews').value)
+    reviews: Number(document.querySelector('#modalProdReviews').value),
+    isBestseller: document.querySelector('#modalProdBestseller').checked,
+    isActive: document.querySelector('#modalProdActive').checked
   };
 
   try {

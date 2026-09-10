@@ -22,18 +22,33 @@ let fallbackStore = {
   }
 };
 
+const defaultCategories = [
+  { id: 'birthday', name: 'Birthday' },
+  { id: 'anniversary', name: 'Anniversary' },
+  { id: 'wedding', name: 'Wedding' },
+  { id: 'festivals', name: 'Festivals' },
+  { id: 'corporate-gifting', name: 'Corporate Gifting' },
+  { id: 'for-her', name: 'For Her' },
+  { id: 'for-him', name: 'For Him' }
+];
+
 async function loadFallbackData() {
   try {
     const raw = await fs.readFile(path.join(__dirname, 'data.json'), 'utf8');
     const parsed = JSON.parse(raw);
     fallbackStore.products = parsed.products || [];
-    fallbackStore.categories = parsed.categories || [];
     fallbackStore.cart = parsed.cart || { items: [] };
     fallbackStore.favorites = parsed.favorites || [];
     fallbackStore.orders = parsed.orders || [];
     if (parsed.settings) fallbackStore.settings = parsed.settings;
+
+    const catMap = new Map();
+    defaultCategories.forEach(c => catMap.set(c.id, c));
+    (parsed.categories || []).forEach(c => catMap.set(c.id, c));
+    fallbackStore.categories = Array.from(catMap.values());
   } catch (err) {
     console.warn('Could not read initial data.json for fallback store:', err.message);
+    fallbackStore.categories = [...defaultCategories];
   }
 }
 
@@ -195,17 +210,17 @@ async function getProductById(id) {
 }
 
 async function createProduct(productData) {
-  const { id, name, shortName, tag, price, mrp, image, description, rating = 4.8, reviews = 0, stockQuantity = 50, categoryId = null } = productData;
+  const { id, name, shortName, tag, price, mrp, image, description, rating = 4.8, reviews = 0, stockQuantity = 50, categoryId = null, isBestseller = false, isActive = true } = productData;
   const prodId = id || name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   if (usePostgres) {
     await pool.query(
-      `INSERT INTO products (id, name, short_name, tag, price, mrp, image, description, rating, reviews, stock_quantity, category_id)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
-      [prodId, name, shortName || name, tag || 'Curated', price, mrp || price + 300, image, description, rating, reviews, stockQuantity, categoryId]
+      `INSERT INTO products (id, name, short_name, tag, price, mrp, image, description, rating, reviews, stock_quantity, category_id, is_bestseller, is_active)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
+      [prodId, name, shortName || name, tag || 'Curated', price, mrp || price + 300, image, description, rating, reviews, stockQuantity, categoryId, Boolean(isBestseller), isActive !== false]
     );
     return getProductById(prodId);
   } else {
-    const newProd = { id: prodId, name, shortName: shortName || name, tag: tag || 'Curated', price, mrp: mrp || price + 300, image, description, rating, reviews, stockQuantity, categoryId };
+    const newProd = { id: prodId, name, shortName: shortName || name, tag: tag || 'Curated', price, mrp: mrp || price + 300, image, description, rating, reviews, stockQuantity, categoryId, isBestseller: Boolean(isBestseller), isActive: isActive !== false };
     fallbackStore.products.unshift(newProd);
     await saveFallbackData();
     return newProd;
@@ -259,15 +274,11 @@ async function getCategories() {
     const res = await pool.query('SELECT * FROM categories ORDER BY name ASC');
     return res.rows;
   } else {
-    return fallbackStore.categories.length > 0 ? fallbackStore.categories : [
-      { id: 'birthday', name: 'Birthday' },
-      { id: 'anniversary', name: 'Anniversary' },
-      { id: 'wedding', name: 'Wedding' },
-      { id: 'festivals', name: 'Festivals' },
-      { id: 'corporate-gifting', name: 'Corporate Gifting' },
-      { id: 'for-her', name: 'For Her' },
-      { id: 'for-him', name: 'For Him' }
-    ];
+    const catMap = new Map();
+    defaultCategories.forEach(c => catMap.set(c.id, c));
+    (fallbackStore.categories || []).forEach(c => catMap.set(c.id, c));
+    fallbackStore.categories = Array.from(catMap.values());
+    return fallbackStore.categories;
   }
 }
 
@@ -277,9 +288,12 @@ async function createCategory(name) {
     await pool.query('INSERT INTO categories (id, name) VALUES ($1, $2) ON CONFLICT DO NOTHING', [id, name]);
     return { id, name };
   } else {
+    await getCategories();
     const newCat = { id, name };
-    fallbackStore.categories.push(newCat);
-    await saveFallbackData();
+    if (!fallbackStore.categories.some(c => c.id === id)) {
+      fallbackStore.categories.push(newCat);
+      await saveFallbackData();
+    }
     return newCat;
   }
 }
@@ -289,6 +303,7 @@ async function deleteCategory(id) {
     await pool.query('DELETE FROM categories WHERE id = $1', [id]);
     return true;
   } else {
+    await getCategories();
     fallbackStore.categories = fallbackStore.categories.filter(c => c.id !== id);
     await saveFallbackData();
     return true;

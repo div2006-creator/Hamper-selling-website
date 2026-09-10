@@ -547,15 +547,46 @@
       "reviews": 190
     }
   ],
-  "integrations": {
-    "razorpay": {
-      "webhookUrl": "https://lightblue-cassowary-624512.hostingersite.com/api/razorpay/webhook",
-      "enabled": true
+  "categories": [
+    {
+      "id": "birthday",
+      "name": "Birthday"
+    },
+    {
+      "id": "anniversary",
+      "name": "Anniversary"
+    },
+    {
+      "id": "wedding",
+      "name": "Wedding"
+    },
+    {
+      "id": "festivals",
+      "name": "Festivals"
+    },
+    {
+      "id": "corporate-gifting",
+      "name": "Corporate Gifting"
+    },
+    {
+      "id": "for-her",
+      "name": "For Her"
+    },
+    {
+      "id": "for-him",
+      "name": "For Him"
     }
-  },
+  ],
   "cart": {
     "items": [],
     "updatedAt": "2026-09-06T12:00:00.000Z"
   },
-  "orders": []
+  "favorites": [],
+  "orders": [],
+  "settings": {
+    "announcement_text": "VIP FLASH OFFER: Extra 15% Off Luxury Hampers with code SUNDOWN15",
+    "helpline_phone": "+91 8655239282",
+    "instagram_handle": "@aaryann_guptaa",
+    "banner_shipping_text": "⚡ SAME-DAY EXPRESS DISPATCH PAN MUMBAI • 19,000+ PIN Codes Covered"
+  }
 }

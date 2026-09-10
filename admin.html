@@ -300,6 +300,10 @@
           <label class="full-width">
             <span>Image URL *</span>
             <input type="url" id="modalProdImage" required placeholder="https://images.unsplash.com/..." />
+            <div id="modalProdImagePreviewBox" class="image-preview-box" style="display:none; margin-top:8px;">
+              <img id="modalProdImagePreview" src="" alt="Preview" style="max-height:90px; border-radius:6px; border:1px solid #ddd; object-fit:cover;" />
+              <small style="display:block; color:#666; font-size:11px; margin-top:2px;">Live Image Preview</small>
+            </div>
           </label>
           <label class="full-width">
             <span>Description</span>
@@ -317,6 +321,16 @@
             <span>Reviews Count</span>
             <input type="number" id="modalProdReviews" min="0" value="120" />
           </label>
+          <div class="full-width checkbox-row" style="display:flex; gap:24px; align-items:center; padding:10px 0; border-top:1px dashed #e0e0e0; margin-top:6px;">
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600;">
+              <input type="checkbox" id="modalProdBestseller" style="width:18px; height:18px; accent-color:var(--copper);" />
+              <span>Show in Homepage Bestsellers</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:600;">
+              <input type="checkbox" id="modalProdActive" checked style="width:18px; height:18px; accent-color:var(--copper);" />
+              <span>Active / Visible on Storefront</span>
+            </label>
+          </div>
         </div>
         <div class="modal-actions">
           <button type="button" class="admin-btn secondary-btn" onclick="closeProductModal()">Cancel</button>
