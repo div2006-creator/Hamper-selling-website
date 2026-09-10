@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS products (
   description TEXT,
   rating NUMERIC(3,1) DEFAULT 4.8,
   reviews INT DEFAULT 100,
+  stock_quantity INT DEFAULT 50,
   is_active BOOLEAN DEFAULT TRUE,
   is_bestseller BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -28,6 +29,7 @@ CREATE TABLE IF NOT EXISTS cart_items (
   session_id VARCHAR(100) NOT NULL DEFAULT 'default_guest',
   product_id VARCHAR(100) NOT NULL,
   quantity INT NOT NULL DEFAULT 1,
+  personalisation_json JSONB DEFAULT '{}',
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT unique_session_product UNIQUE(session_id, product_id)
 );

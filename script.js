@@ -63,31 +63,34 @@ async function loadBestsellers() {
     // Display bestsellers or first 6 products
     const displayProducts = products.filter(p => p.isBestseller).length > 0 ? products.filter(p => p.isBestseller) : products.slice(0, 6);
 
-    container.innerHTML = displayProducts.map(p => `
+    container.innerHTML = displayProducts.map(p => {
+      const isOutOfStock = (p.stockQuantity !== undefined && p.stockQuantity <= 0);
+      return `
       <article class="product-card" data-id="${p.id}" data-name="${p.name.toLowerCase()}">
         <div class="product-image">
           <img src="${p.image}" alt="${p.name}" onerror="this.src='https://lh3.googleusercontent.com/aida-public/AB6AXuCv99V82mbTkLCy_VYd6NxPxQ5kvPV3ckqvY6NRMfdOdoEXok6F0NtfZN_76HtgHFWSW4YAMqjZoIGlWXt_lGFci4gL1BuzvcfJucXy_7NhU_MN58Xo8iRtWskA7KvLwiOMJbLukB5FeEHh_Om18fC6qT8lxoR-c-kr49_EVc_hRTfjVzd-ychpySK41Sx0bHBBM-IP7eDSHfegeXuTBvhMg6Vgvw8GFALqfgHtYjct6aJLzzmM_witeg'" />
           <span class="product-tag">${p.tag || 'Bestseller'}</span>
+          ${isOutOfStock ? '<span class="out-stock-badge">Out of Stock</span>' : ''}
           <button class="favorite ${favSet.has(p.id) ? 'is-favorite' : ''}" data-product-id="${p.id}" aria-label="Add ${p.name} to favorites">
             <span class="material-symbols-outlined">favorite</span>
           </button>
         </div>
         <div class="product-info">
           <div class="rating"><span class="material-symbols-outlined">star</span> ${p.rating || 4.9} <small>(${p.reviews || 100} reviews)</small></div>
-          <h3>${p.name}</h3>
+          <h3><a href="pages.html?view=product&amp;product=${p.id}">${p.name}</a></h3>
           <p>${p.description || ''}</p>
           <div class="price-row">
             <strong>₹${p.price.toLocaleString('en-IN')}</strong>
             <del>₹${p.mrp ? p.mrp.toLocaleString('en-IN') : (p.price + 500).toLocaleString('en-IN')}</del>
             <span>OFFER</span>
           </div>
-          <small class="saving">Free Express Shipping</small>
-          <button class="add-button" data-product-id="${p.id}" data-product-name="${p.name}">
-            <span class="material-symbols-outlined">shopping_bag</span> Add to Cart
+          <small class="saving">${isOutOfStock ? 'Currently Unavailable' : 'Free Express Shipping'}</small>
+          <button class="add-button" data-product-id="${p.id}" data-product-name="${p.name}" ${isOutOfStock ? 'disabled' : ''}>
+            <span class="material-symbols-outlined">shopping_bag</span> ${isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
           </button>
         </div>
       </article>
-    `).join('');
+    `}).join('');
 
     bindProductActions();
   } catch (err) {

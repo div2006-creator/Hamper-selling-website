@@ -27,11 +27,30 @@ async function loadFallbackData() {
     const raw = await fs.readFile(path.join(__dirname, 'data.json'), 'utf8');
     const parsed = JSON.parse(raw);
     fallbackStore.products = parsed.products || [];
+    fallbackStore.categories = parsed.categories || [];
     fallbackStore.cart = parsed.cart || { items: [] };
     fallbackStore.favorites = parsed.favorites || [];
     fallbackStore.orders = parsed.orders || [];
+    if (parsed.settings) fallbackStore.settings = parsed.settings;
   } catch (err) {
     console.warn('Could not read initial data.json for fallback store:', err.message);
+  }
+}
+
+async function saveFallbackData() {
+  if (usePostgres) return;
+  try {
+    const dataToSave = {
+      products: fallbackStore.products,
+      categories: fallbackStore.categories,
+      cart: fallbackStore.cart,
+      favorites: fallbackStore.favorites,
+      orders: fallbackStore.orders,
+      settings: fallbackStore.settings
+    };
+    await fs.writeFile(path.join(__dirname, 'data.json'), JSON.stringify(dataToSave, null, 2), 'utf8');
+  } catch (err) {
+    console.error('Error saving fallback data to data.json:', err.message);
   }
 }
 
@@ -126,12 +145,16 @@ async function getProducts({ search = '', categoryId = null, activeOnly = true }
       description: row.description,
       rating: parseFloat(row.rating),
       reviews: row.reviews,
+      stockQuantity: row.stock_quantity !== undefined ? parseInt(row.stock_quantity, 10) : 50,
       categoryId: row.category_id,
       isActive: row.is_active,
       isBestseller: row.is_bestseller
     }));
   } else {
-    let items = fallbackStore.products;
+    let items = fallbackStore.products.map(p => ({
+      ...p,
+      stockQuantity: p.stockQuantity !== undefined ? p.stockQuantity : (p.stock_quantity !== undefined ? p.stock_quantity : 50)
+    }));
     if (search) {
       const q = search.toLowerCase();
       items = items.filter(p => p.name.toLowerCase().includes(q) || (p.description && p.description.toLowerCase().includes(q)));
@@ -156,28 +179,35 @@ async function getProductById(id) {
       description: row.description,
       rating: parseFloat(row.rating),
       reviews: row.reviews,
+      stockQuantity: row.stock_quantity !== undefined ? parseInt(row.stock_quantity, 10) : 50,
       categoryId: row.category_id,
       isActive: row.is_active,
       isBestseller: row.is_bestseller
     };
   } else {
-    return fallbackStore.products.find(p => p.id === id) || null;
+    const p = fallbackStore.products.find(prod => prod.id === id);
+    if (!p) return null;
+    return {
+      ...p,
+      stockQuantity: p.stockQuantity !== undefined ? p.stockQuantity : (p.stock_quantity !== undefined ? p.stock_quantity : 50)
+    };
   }
 }
 
 async function createProduct(productData) {
-  const { id, name, shortName, tag, price, mrp, image, description, rating = 4.8, reviews = 0, categoryId = null } = productData;
+  const { id, name, shortName, tag, price, mrp, image, description, rating = 4.8, reviews = 0, stockQuantity = 50, categoryId = null } = productData;
   const prodId = id || name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   if (usePostgres) {
     await pool.query(
-      `INSERT INTO products (id, name, short_name, tag, price, mrp, image, description, rating, reviews, category_id)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
-      [prodId, name, shortName || name, tag || 'Curated', price, mrp || price + 300, image, description, rating, reviews, categoryId]
+      `INSERT INTO products (id, name, short_name, tag, price, mrp, image, description, rating, reviews, stock_quantity, category_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+      [prodId, name, shortName || name, tag || 'Curated', price, mrp || price + 300, image, description, rating, reviews, stockQuantity, categoryId]
     );
     return getProductById(prodId);
   } else {
-    const newProd = { id: prodId, name, shortName: shortName || name, tag: tag || 'Curated', price, mrp: mrp || price + 300, image, description, rating, reviews, categoryId };
+    const newProd = { id: prodId, name, shortName: shortName || name, tag: tag || 'Curated', price, mrp: mrp || price + 300, image, description, rating, reviews, stockQuantity, categoryId };
     fallbackStore.products.unshift(newProd);
+    await saveFallbackData();
     return newProd;
   }
 }
@@ -188,7 +218,7 @@ async function updateProduct(id, productData) {
     const params = [];
     let idx = 1;
 
-    const allowed = ['name', 'short_name', 'tag', 'price', 'mrp', 'image', 'description', 'rating', 'reviews', 'category_id', 'is_active', 'is_bestseller'];
+    const allowed = ['name', 'short_name', 'tag', 'price', 'mrp', 'image', 'description', 'rating', 'reviews', 'stock_quantity', 'category_id', 'is_active', 'is_bestseller'];
     for (const key of allowed) {
       const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
       if (productData[key] !== undefined || productData[camelKey] !== undefined) {
@@ -206,6 +236,7 @@ async function updateProduct(id, productData) {
     const prod = fallbackStore.products.find(p => p.id === id);
     if (!prod) return null;
     Object.assign(prod, productData);
+    await saveFallbackData();
     return prod;
   }
 }
@@ -218,6 +249,7 @@ async function deleteProduct(id) {
     const index = fallbackStore.products.findIndex(p => p.id === id);
     if (index === -1) return false;
     fallbackStore.products.splice(index, 1);
+    await saveFallbackData();
     return true;
   }
 }
@@ -247,6 +279,7 @@ async function createCategory(name) {
   } else {
     const newCat = { id, name };
     fallbackStore.categories.push(newCat);
+    await saveFallbackData();
     return newCat;
   }
 }
@@ -257,6 +290,7 @@ async function deleteCategory(id) {
     return true;
   } else {
     fallbackStore.categories = fallbackStore.categories.filter(c => c.id !== id);
+    await saveFallbackData();
     return true;
   }
 }
@@ -266,7 +300,7 @@ async function deleteCategory(id) {
 async function getCart(sessionId = 'default_guest') {
   if (usePostgres) {
     const res = await pool.query(
-      `SELECT c.product_id, c.quantity, p.name, p.short_name, p.tag, p.price, p.mrp, p.image, p.description
+      `SELECT c.product_id, c.quantity, c.personalisation_json, p.name, p.short_name, p.tag, p.price, p.mrp, p.image, p.description, p.stock_quantity
        FROM cart_items c
        JOIN products p ON c.product_id = p.id
        WHERE c.session_id = $1`,
@@ -275,6 +309,7 @@ async function getCart(sessionId = 'default_guest') {
     const items = res.rows.map(row => ({
       productId: row.product_id,
       quantity: row.quantity,
+      personalisation: row.personalisation_json || {},
       product: {
         id: row.product_id,
         name: row.name,
@@ -283,7 +318,8 @@ async function getCart(sessionId = 'default_guest') {
         price: row.price,
         mrp: row.mrp,
         image: row.image,
-        description: row.description
+        description: row.description,
+        stockQuantity: row.stock_quantity !== undefined ? parseInt(row.stock_quantity, 10) : 50
       },
       lineTotal: row.price * row.quantity
     }));
@@ -294,7 +330,15 @@ async function getCart(sessionId = 'default_guest') {
     const catalog = fallbackStore.products;
     const items = fallbackStore.cart.items.map(item => {
       const product = catalog.find(p => p.id === item.productId);
-      return product ? { ...item, product, lineTotal: product.price * item.quantity } : null;
+      return product ? {
+        ...item,
+        personalisation: item.personalisation || {},
+        product: {
+          ...product,
+          stockQuantity: product.stockQuantity !== undefined ? product.stockQuantity : (product.stock_quantity !== undefined ? product.stock_quantity : 50)
+        },
+        lineTotal: product.price * item.quantity
+      } : null;
     }).filter(Boolean);
     const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
     const subtotal = items.reduce((sum, item) => sum + item.lineTotal, 0);
@@ -302,32 +346,58 @@ async function getCart(sessionId = 'default_guest') {
   }
 }
 
-async function addToCart(sessionId = 'default_guest', productId, quantity = 1) {
+async function addToCart(sessionId = 'default_guest', productId, quantity = 1, personalisation = null) {
+  const prod = await getProductById(productId);
+  const maxStock = prod ? (prod.stockQuantity !== undefined ? prod.stockQuantity : 50) : 99;
+
   if (usePostgres) {
+    const persJson = personalisation ? JSON.stringify(personalisation) : '{}';
     await pool.query(
-      `INSERT INTO cart_items (session_id, product_id, quantity)
-       VALUES ($1, $2, $3)
+      `INSERT INTO cart_items (session_id, product_id, quantity, personalisation_json)
+       VALUES ($1, $2, $3, $4::jsonb)
        ON CONFLICT (session_id, product_id)
-       DO UPDATE SET quantity = LEAST(99, cart_items.quantity + $3), updated_at = CURRENT_TIMESTAMP`,
-      [sessionId, productId, quantity]
+       DO UPDATE SET quantity = LEAST($5, cart_items.quantity + $3),
+                     personalisation_json = CASE WHEN $4 != '{}' THEN $4::jsonb ELSE cart_items.personalisation_json END,
+                     updated_at = CURRENT_TIMESTAMP`,
+      [sessionId, productId, quantity, persJson, maxStock]
     );
   } else {
     const item = fallbackStore.cart.items.find(i => i.productId === productId);
-    if (item) item.quantity = Math.min(99, item.quantity + quantity);
-    else fallbackStore.cart.items.push({ productId, quantity });
+    if (item) {
+      item.quantity = Math.min(maxStock, item.quantity + quantity);
+      if (personalisation) item.personalisation = personalisation;
+    } else {
+      fallbackStore.cart.items.push({ productId, quantity, personalisation: personalisation || {} });
+    }
+    await saveFallbackData();
   }
   return getCart(sessionId);
 }
 
-async function updateCartItem(sessionId = 'default_guest', productId, quantity) {
+async function updateCartItem(sessionId = 'default_guest', productId, quantity, personalisation = null) {
+  const prod = await getProductById(productId);
+  const maxStock = prod ? (prod.stockQuantity !== undefined ? prod.stockQuantity : 50) : 99;
+  const validQty = Math.min(maxStock, Math.max(1, quantity));
+
   if (usePostgres) {
-    await pool.query(
-      `UPDATE cart_items SET quantity = $3, updated_at = CURRENT_TIMESTAMP WHERE session_id = $1 AND product_id = $2`,
-      [sessionId, productId, quantity]
-    );
+    if (personalisation) {
+      await pool.query(
+        `UPDATE cart_items SET quantity = $3, personalisation_json = $4::jsonb, updated_at = CURRENT_TIMESTAMP WHERE session_id = $1 AND product_id = $2`,
+        [sessionId, productId, validQty, JSON.stringify(personalisation)]
+      );
+    } else {
+      await pool.query(
+        `UPDATE cart_items SET quantity = $3, updated_at = CURRENT_TIMESTAMP WHERE session_id = $1 AND product_id = $2`,
+        [sessionId, productId, validQty]
+      );
+    }
   } else {
     const item = fallbackStore.cart.items.find(i => i.productId === productId);
-    if (item) item.quantity = quantity;
+    if (item) {
+      item.quantity = validQty;
+      if (personalisation) item.personalisation = personalisation;
+    }
+    await saveFallbackData();
   }
   return getCart(sessionId);
 }
@@ -337,6 +407,7 @@ async function removeFromCart(sessionId = 'default_guest', productId) {
     await pool.query(`DELETE FROM cart_items WHERE session_id = $1 AND product_id = $2`, [sessionId, productId]);
   } else {
     fallbackStore.cart.items = fallbackStore.cart.items.filter(i => i.productId !== productId);
+    await saveFallbackData();
   }
   return getCart(sessionId);
 }
@@ -346,6 +417,7 @@ async function clearCart(sessionId = 'default_guest') {
     await pool.query(`DELETE FROM cart_items WHERE session_id = $1`, [sessionId]);
   } else {
     fallbackStore.cart.items = [];
+    await saveFallbackData();
   }
   return getCart(sessionId);
 }
@@ -376,6 +448,7 @@ async function toggleFavorite(sessionId = 'default_guest', productId) {
     const idx = fallbackStore.favorites.indexOf(productId);
     if (idx === -1) fallbackStore.favorites.push(productId);
     else fallbackStore.favorites.splice(idx, 1);
+    await saveFallbackData();
     return { productId, saved: idx === -1, favorites: fallbackStore.favorites };
   }
 }
@@ -386,7 +459,7 @@ async function getPersonalisation(sessionId = 'default_guest') {
     if (!res.rows.length) return { message: '', ribbon: 'Terracotta Raw Silk', occasion: 'Anniversary' };
     return res.rows[0];
   } else {
-    return fallbackStore.personalisation;
+    return fallbackStore.personalisation || { message: '', ribbon: 'Terracotta Raw Silk', occasion: 'Anniversary' };
   }
 }
 
@@ -401,6 +474,7 @@ async function savePersonalisation(sessionId = 'default_guest', { message = '', 
     );
   } else {
     fallbackStore.personalisation = { message, ribbon, occasion };
+    await saveFallbackData();
   }
   return { message, ribbon, occasion };
 }
@@ -428,8 +502,44 @@ async function getOrders() {
   }
 }
 
+async function getOrderById(id) {
+  const cleanId = String(id || '').toLowerCase().trim();
+  if (usePostgres) {
+    const res = await pool.query('SELECT * FROM orders WHERE LOWER(id) = $1', [cleanId]);
+    if (!res.rows.length) return null;
+    const row = res.rows[0];
+    return {
+      id: row.id,
+      createdAt: row.created_at,
+      status: row.status,
+      customer: {
+        name: row.customer_name,
+        phone: row.customer_phone,
+        address: row.customer_address
+      },
+      paymentMethod: row.payment_method,
+      items: row.items_json,
+      total: row.total
+    };
+  } else {
+    return fallbackStore.orders.find(o => String(o.id).toLowerCase() === cleanId) || null;
+  }
+}
+
 async function createOrder(orderData) {
   const { id, customer, paymentMethod, items, total } = orderData;
+
+  // Deduct stock levels for ordered items
+  for (const item of items) {
+    if (item.productId) {
+      const prod = await getProductById(item.productId);
+      if (prod) {
+        const newStock = Math.max(0, (prod.stockQuantity !== undefined ? prod.stockQuantity : 50) - item.quantity);
+        await updateProduct(item.productId, { stockQuantity: newStock });
+      }
+    }
+  }
+
   if (usePostgres) {
     await pool.query(
       `INSERT INTO orders (id, customer_name, customer_phone, customer_address, payment_method, items_json, total)
@@ -439,6 +549,7 @@ async function createOrder(orderData) {
   } else {
     const order = { id, createdAt: new Date().toISOString(), status: 'confirmed', customer, paymentMethod, items, total };
     fallbackStore.orders.unshift(order);
+    await saveFallbackData();
   }
   return orderData;
 }
@@ -449,6 +560,7 @@ async function updateOrderStatus(orderId, status) {
   } else {
     const order = fallbackStore.orders.find(o => o.id === orderId);
     if (order) order.status = status;
+    await saveFallbackData();
   }
   return { id: orderId, status };
 }
@@ -479,6 +591,7 @@ async function updateSiteSettings(settingsObj) {
     }
   } else {
     Object.assign(fallbackStore.settings, settingsObj);
+    await saveFallbackData();
   }
   return getSiteSettings();
 }
@@ -515,6 +628,7 @@ module.exports = {
   getPersonalisation,
   savePersonalisation,
   getOrders,
+  getOrderById,
   createOrder,
   updateOrderStatus,
   getSiteSettings,

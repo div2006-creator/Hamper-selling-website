@@ -9,13 +9,35 @@ const port = Number(process.env.PORT) || 3000;
 
 app.use(express.static(__dirname));
 
-// Simple admin authentication middleware
+// Rate Limiting & Anti-Spam Middleware
+const requestLogs = new Map();
+function rateLimit(maxRequests = 60, windowMs = 60000) {
+  return (req, res, next) => {
+    const ip = req.ip || req.socket?.remoteAddress || 'unknown';
+    const now = Date.now();
+    const timestamps = (requestLogs.get(ip) || []).filter(t => now - t < windowMs);
+    if (timestamps.length >= maxRequests) {
+      return res.status(429).json({ error: 'Too many requests. Please try again in a minute.' });
+    }
+    timestamps.push(now);
+    requestLogs.set(ip, timestamps);
+    next();
+  };
+}
+
+// Dynamic Admin Session Security
+const activeAdminTokens = new Set();
+const defaultSecret = process.env.ADMIN_SESSION_SECRET || 'supriszo-secret-key-2024';
+
 function requireAdmin(request, response, next) {
   const authHeader = request.headers.authorization;
-  if (authHeader && authHeader === `Bearer ${process.env.ADMIN_SESSION_SECRET || 'supriszo-secret-key-2024'}`) {
+  if (!authHeader) return response.status(401).json({ error: 'Unauthorized admin access' });
+
+  const token = authHeader.replace('Bearer ', '').trim();
+  if (token === defaultSecret || activeAdminTokens.has(token)) {
     return next();
   }
-  return response.status(401).json({ error: 'Unauthorized admin access' });
+  return response.status(401).json({ error: 'Unauthorized admin access or session expired' });
 }
 
 // Public Customer API Routes
@@ -104,10 +126,10 @@ app.get('/api/cart', async (request, response) => {
 app.post('/api/cart/items', express.json(), async (request, response) => {
   try {
     const sessionId = request.headers['x-session-id'] || 'default_guest';
-    const { productId, quantity = 1 } = request.body || {};
+    const { productId, quantity = 1, personalisation = null } = request.body || {};
     if (!productId) return response.status(400).json({ error: 'productId is required' });
 
-    const cart = await db.addToCart(sessionId, productId, Number(quantity));
+    const cart = await db.addToCart(sessionId, productId, Number(quantity), personalisation);
     response.status(201).json(cart);
   } catch (error) {
     response.status(500).json({ error: error.message });
@@ -117,12 +139,13 @@ app.post('/api/cart/items', express.json(), async (request, response) => {
 app.patch('/api/cart/items/:productId', express.json(), async (request, response) => {
   try {
     const sessionId = request.headers['x-session-id'] || 'default_guest';
-    const quantity = Number(request.body?.quantity);
-    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 99) {
+    const { quantity, personalisation } = request.body || {};
+    const qty = Number(quantity);
+    if (!Number.isInteger(qty) || qty < 1 || qty > 99) {
       return response.status(400).json({ error: 'Quantity must be an integer between 1 and 99' });
     }
 
-    const cart = await db.updateCartItem(sessionId, request.params.productId, quantity);
+    const cart = await db.updateCartItem(sessionId, request.params.productId, qty, personalisation);
     response.json(cart);
   } catch (error) {
     response.status(500).json({ error: error.message });
@@ -193,7 +216,18 @@ app.put('/api/personalisation', express.json(), async (request, response) => {
   }
 });
 
-app.post('/api/orders', express.json(), async (request, response) => {
+// Order Lookup (Public Order Tracking)
+app.get('/api/orders/:id', async (request, response) => {
+  try {
+    const order = await db.getOrderById(request.params.id);
+    if (!order) return response.status(404).json({ error: 'Order not found' });
+    response.json(order);
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/orders', rateLimit(15, 60000), express.json(), async (request, response) => {
   try {
     const sessionId = request.headers['x-session-id'] || 'default_guest';
     const cart = await db.getCart(sessionId);
@@ -213,10 +247,11 @@ app.post('/api/orders', express.json(), async (request, response) => {
       id: `SPR-${crypto.randomBytes(3).toString('hex').toUpperCase()}`,
       customer: { name: customer.name, phone: customer.phone, address: customer.address },
       paymentMethod,
-      items: cart.items.map(({ product, quantity, lineTotal }) => ({
+      items: cart.items.map(({ product, quantity, lineTotal, personalisation }) => ({
         productId: product.id,
         name: product.name,
         quantity,
+        personalisation: personalisation || {},
         lineTotal
       })),
       total: cart.total
@@ -251,14 +286,15 @@ app.post('/api/razorpay/webhook', express.raw({ type: 'application/json' }), asy
 
 // ADMIN API ENDPOINTS
 
-app.post('/api/admin/login', express.json(), (request, response) => {
+app.post('/api/admin/login', rateLimit(10, 60000), express.json(), (request, response) => {
   const { username, password } = request.body || {};
   const validUsername = process.env.ADMIN_USERNAME || 'admin';
   const validPassword = process.env.ADMIN_PASSWORD || 'admin123';
 
   if (username === validUsername && password === validPassword) {
-    const token = process.env.ADMIN_SESSION_SECRET || 'supriszo-secret-key-2024';
-    return response.json({ success: true, token, username: validUsername });
+    const sessionToken = `spr_adm_${crypto.randomBytes(16).toString('hex')}`;
+    activeAdminTokens.add(sessionToken);
+    return response.json({ success: true, token: sessionToken, username: validUsername });
   }
 
   return response.status(401).json({ error: 'Invalid admin username or password' });

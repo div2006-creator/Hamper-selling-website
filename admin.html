@@ -177,13 +177,14 @@
                   <th>Tag</th>
                   <th>Price</th>
                   <th>MRP</th>
+                  <th>Stock</th>
                   <th>Rating</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="productsTableBody">
-                <tr><td colspan="8" class="text-center">Loading product catalog...</td></tr>
+                <tr><td colspan="9" class="text-center">Loading product catalog...</td></tr>
               </tbody>
             </table>
           </div>
@@ -303,6 +304,10 @@
           <label class="full-width">
             <span>Description</span>
             <textarea id="modalProdDesc" rows="3" placeholder="Handcrafted with brass diya, organic saffron, salted nuts..."></textarea>
+          </label>
+          <label>
+            <span>Stock Quantity *</span>
+            <input type="number" id="modalProdStock" required min="0" value="50" placeholder="50" />
           </label>
           <label>
             <span>Initial Rating (1.0 - 5.0)</span>

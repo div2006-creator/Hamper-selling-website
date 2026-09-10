@@ -26,10 +26,30 @@ function showToast(message) {
   if (!toast) return;
   toast.textContent = message;
   toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2200);
+  setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-const productCardFromObject = (product) => `<article class="product-card page-product-card" data-name="${product.name.toLowerCase()}"><div class="product-image"><img src="${product.image}" alt="${product.name}" onerror="this.src='https://lh3.googleusercontent.com/aida-public/AB6AXuCv99V82mbTkLCy_VYd6NxPxQ5kvPV3ckqvY6NRMfdOdoEXok6F0NtfZN_76HtgHFWSW4YAMqjZoIGlWXt_lGFci4gL1BuzvcfJucXy_7NhU_MN58Xo8iRtWskA7KvLwiOMJbLukB5FeEHh_Om18fC6qT8lxoR-c-kr49_EVc_hRTfjVzd-ychpySK41Sx0bHBBM-IP7eDSHfegeXuTBvhMg6Vgvw8GFALqfgHtYjct6aJLzzmM_witeg'" /><span class="product-tag">${product.tag || 'Curated'}</span><button class="favorite" data-product-id="${product.id}" aria-label="Save ${product.name}"><span class="material-symbols-outlined">favorite</span></button></div><div class="product-info"><div class="rating"><span class="material-symbols-outlined">star</span> ${product.rating || 4.8} <small>(${product.reviews || 100} reviews)</small></div><h3><a href="pages.html?view=product&amp;product=${product.id}">${product.name}</a></h3><p>${product.description || ''}</p><div class="price-row"><strong>₹${(product.price || 0).toLocaleString('en-IN')}</strong><del>₹${(product.mrp || product.price + 400).toLocaleString('en-IN')}</del><span>OFFER</span></div><small class="saving">Free Express Shipping • Gift-ready packaging</small><button class="add-button" data-product-id="${product.id}" data-product="${product.name}"><span class="material-symbols-outlined">shopping_bag</span> Add to Cart</button></div></article>`;
+const productCardFromObject = (product) => {
+  const isOutOfStock = (product.stockQuantity !== undefined && product.stockQuantity <= 0);
+  return `<article class="product-card page-product-card" data-name="${product.name.toLowerCase()}" data-price="${product.price}" data-rating="${product.rating || 4.8}">
+    <div class="product-image">
+      <img src="${product.image}" alt="${product.name}" onerror="this.src='https://lh3.googleusercontent.com/aida-public/AB6AXuCv99V82mbTkLCy_VYd6NxPxQ5kvPV3ckqvY6NRMfdOdoEXok6F0NtfZN_76HtgHFWSW4YAMqjZoIGlWXt_lGFci4gL1BuzvcfJucXy_7NhU_MN58Xo8iRtWskA7KvLwiOMJbLukB5FeEHh_Om18fC6qT8lxoR-c-kr49_EVc_hRTfjVzd-ychpySK41Sx0bHBBM-IP7eDSHfegeXuTBvhMg6Vgvw8GFALqfgHtYjct6aJLzzmM_witeg'" />
+      <span class="product-tag">${product.tag || 'Curated'}</span>
+      ${isOutOfStock ? '<span class="out-stock-badge">Out of Stock</span>' : ''}
+      <button class="favorite" data-product-id="${product.id}" aria-label="Save ${product.name}"><span class="material-symbols-outlined">favorite</span></button>
+    </div>
+    <div class="product-info">
+      <div class="rating"><span class="material-symbols-outlined">star</span> ${product.rating || 4.8} <small>(${product.reviews || 100} reviews)</small></div>
+      <h3><a href="pages.html?view=product&amp;product=${product.id}">${product.name}</a></h3>
+      <p>${product.description || ''}</p>
+      <div class="price-row"><strong>₹${(product.price || 0).toLocaleString('en-IN')}</strong><del>₹${(product.mrp || product.price + 400).toLocaleString('en-IN')}</del><span>OFFER</span></div>
+      <small class="saving">${isOutOfStock ? 'Currently Unavailable' : 'Free Express Shipping • Gift-ready packaging'}</small>
+      <button class="add-button" data-product-id="${product.id}" data-product="${product.name}" ${isOutOfStock ? 'disabled' : ''}>
+        <span class="material-symbols-outlined">shopping_bag</span> ${isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+      </button>
+    </div>
+  </article>`;
+};
 
 const sectionHeader = (eyebrow, title, copy = '') => `<div class="page-title"><p class="eyebrow">${eyebrow}</p><h1>${title}</h1>${copy ? `<p>${copy}</p>` : ''}</div>`;
 
@@ -54,14 +74,23 @@ function protectImages(scope = document) {
 
 function render(view) {
   const content = document.querySelector('#pageContent');
+  const urlParams = new URLSearchParams(window.location.search);
   const targetView = (view === 'categories' || view === 'occasions') ? 'hampers' : view;
   document.querySelectorAll('[data-nav]').forEach((link) => link.classList.toggle('active', link.dataset.nav === targetView));
 
-  if (targetView === 'hampers') {
+  if (targetView === 'product') {
+    const prodId = urlParams.get('product');
+    content.innerHTML = `<section class="page-width inner-page pdp-page"><p class="catalog-loading">Loading product details...</p></section>`;
+    hydrateProductDetailPage(prodId);
+  } else if (targetView === 'track') {
+    const orderId = urlParams.get('id') || '';
+    content.innerHTML = `<section class="page-width inner-page track-page">${sectionHeader('Real-time Dispatch Tracking', 'Track Your Order', 'Enter your unique Supriszo Order ID (e.g. SPR-XXXXXX) to trace your hamper status.')}<div class="track-container"><div class="track-search-bar"><input id="trackOrderInput" placeholder="e.g. SPR-4A2B89" value="${orderId}" /><button class="button button-dark" id="btnTrackOrder">Track Status <span class="material-symbols-outlined">search</span></button></div><div id="trackResults" style="margin-top:24px;"></div></div></section>`;
+    hydrateOrderTrackingPage(orderId);
+  } else if (targetView === 'hampers') {
     content.innerHTML = `<section class="page-width inner-page">
-      ${sectionHeader('Curated Collections', 'Gift Hampers & Categories', 'Explore 42 unique artisanal hampers organized by occasion, milestone, and gift recipient.')}
+      ${sectionHeader('Curated Collections', 'Gift Hampers & Categories', 'Explore unique artisanal hampers organized by occasion, milestone, budget, and gift recipient.')}
       <div class="category-filter-bar" id="categoryFilterBar">
-        <button class="cat-filter-btn active" data-filter="all">All Hampers (42)</button>
+        <button class="cat-filter-btn active" data-filter="all">All Hampers</button>
         <button class="cat-filter-btn" data-filter="birthday">🎂 Birthday</button>
         <button class="cat-filter-btn" data-filter="anniversary">💍 Anniversary</button>
         <button class="cat-filter-btn" data-filter="wedding">👑 Wedding</button>
@@ -70,13 +99,34 @@ function render(view) {
         <button class="cat-filter-btn" data-filter="for-her">🌹 For Her</button>
         <button class="cat-filter-btn" data-filter="for-him">🎩 For Him</button>
       </div>
+
+      <div class="catalog-toolbar">
+        <div class="budget-filter-bar">
+          <span class="toolbar-label">Budget:</span>
+          <button class="budget-btn active" data-budget="all">All Prices</button>
+          <button class="budget-btn" data-budget="under1000">Under ₹1,000</button>
+          <button class="budget-btn" data-budget="1000to2000">₹1,000 - ₹2,000</button>
+          <button class="budget-btn" data-budget="above2000">₹2,000+</button>
+        </div>
+        <div class="sort-bar">
+          <label>Sort By:
+            <select id="catalogSortSelect">
+              <option value="featured">Featured First</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="rating">Highest Rated</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
       <div id="categoryCatalog" class="category-catalog" style="margin-top:20px;">
         <p class="catalog-loading">Loading live gift hamper collection...</p>
       </div>
     </section>`;
     hydrateCategoryCatalog();
   } else if (targetView === 'personalise') {
-    content.innerHTML = `<section class="page-width inner-page personalise-page">${sectionHeader('Made Meaningful', 'Personalise Your Hamper Studio', 'Turn a beautiful gift into an unforgettable gesture with considered details, handwritten words and your own finishing touch.')}<div class="studio-grid"><div class="studio-preview"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuChn8y1etBcrr38hX_sAO2SMdwT-c6XIrGLdYC8znNYqJB5VpO9ZwYtBW_lEDu54Yrw619iQ3i7DDsj4ugSGUtPDlKjjQNZ934UAR0I1puvBSsCH2CNZZBYk_drdYxin66Pg5kNcXG3TcpucYegTsoH-Q7O3JedBkyMSy87RxykNBhUOmhitCptwE4ZshyVQWszkb6zeyi_P9TkSuSINU4Z7-ZuO4HiFTqOWgd8b8l0xtpSy2Pe2DWuZQ" alt="Personalised hamper preview" /><span class="preview-label">Your hamper preview</span></div><div class="studio-form"><label>Gift message<textarea id="personaliseMsg" placeholder="Write a note that feels like you..."></textarea></label><label>Choose a ribbon<select id="personaliseRibbon"><option>Terracotta Raw Silk</option><option>Forest Green Velvet</option><option>Ivory Cotton</option></select></label><label>Gift occasion<select id="personaliseOccasion"><option>Anniversary</option><option>Birthday</option><option>Wedding</option><option>Just Because</option></select></label><button class="button button-dark" id="savePersonalisation">Save Your Details <span class="material-symbols-outlined">arrow_forward</span></button></div></div></section>`;
+    content.innerHTML = `<section class="page-width inner-page personalise-page">${sectionHeader('Made Meaningful', 'Personalise Your Hamper Studio', 'Turn a beautiful gift into an unforgettable gesture with considered details, handwritten words and your own finishing touch.')}<div class="studio-grid"><div class="studio-preview"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuChn8y1etBcrr38hX_sAO2SMdwT-c6XIrGLdYC8znNYqJB5VpO9ZwYtBW_lEDu54Yrw619iQ3i7DDsj4ugSGUtPDlKjjQNZ934UAR0I1puvBSsCH2CNZZBYk_drdYxin66Pg5kNcXG3TcpucYegTsoH-Q7O3JedBkyMSy87RxykNBhUOmhitCptwE4ZshyVQWszkb6zeyi_P9TkSuSINU4Z7-ZuO4HiFTqOWgd8b8l0xtpSy2Pe2DWuZQ" alt="Personalised hamper preview" /><span class="preview-label">Your hamper preview</span></div><div class="studio-form"><label>Gift message<textarea id="personaliseMsg" placeholder="Write a note that feels like you..."></textarea></label><label>Choose a ribbon<select id="personaliseRibbon"><option>Terracotta Raw Silk</option><option>Forest Green Velvet</option><option>Ivory Cotton</option><option>Royal Gold Satin</option></select></label><label>Gift occasion<select id="personaliseOccasion"><option>Anniversary</option><option>Birthday</option><option>Wedding</option><option>Just Because</option></select></label><button class="button button-dark" id="savePersonalisation">Save Your Details <span class="material-symbols-outlined">arrow_forward</span></button></div></div></section>`;
     hydratePersonalisation();
   } else if (targetView === 'about') {
     content.innerHTML = `<section class="page-width inner-page about-page"><div class="about-hero"><div>${sectionHeader('Our Story', 'Gifts that hold a little more meaning.', 'Supriszo means thoughtful surprises. We create considered hampers for the people, places and moments you want to hold close.')}<p class="about-copy">From hand-poured candles to brass keepsakes and small-batch delicacies, every Supriszo & Co. box is composed like a personal story. We partner with independent makers across India and wrap every order by hand in our Mumbai studio.</p><a class="button button-dark" href="pages.html?view=hampers">Explore Our Hampers <span class="material-symbols-outlined">arrow_forward</span></a></div><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu3BWXfYxlaMPRQUu9j_hJdLAQrRubq6nxZTHgu2EPqZa3p566u9VkrFORuxItRWHMXnJ-NEBCOa0Tyw0Vu-Vmv7izkfiRTWjUu2QLe9Swi02sw0odD_dLuFw-CMd-vUBeZ564myuoFVL5aQeQHTi93tiE-rlQ7amB8GXHIVrbI9sQp_nxdtCjpPwPswbo86tVuuzkZ9r4rOhNUm34w7Er84KRLZxJOKH7-zL5TIF3hcminKZ5fdV1aA" alt="Supriszo and Co. gifting studio" /></div></section>`;
@@ -93,6 +143,286 @@ function render(view) {
   bindPageActions();
   bindSearch();
   api('/cart').then(updateCartBadge).catch(() => {});
+}
+
+function hydrateProductDetailPage(prodId) {
+  if (!prodId) {
+    document.querySelector('#pageContent').innerHTML = `<section class="page-width inner-page"><div class="no-results-card" style="text-align:center; padding:48px 24px;"><h2>No product selected.</h2><a class="button button-dark" href="pages.html?view=hampers">Explore Catalog</a></div></section>`;
+    return;
+  }
+  api(`/products/${prodId}`).then((product) => {
+    const isOutOfStock = (product.stockQuantity !== undefined && product.stockQuantity <= 0);
+    const stockMsg = isOutOfStock
+      ? `<span class="stock-tag out-of-stock"><span class="material-symbols-outlined">cancel</span> Out of Stock</span>`
+      : (product.stockQuantity && product.stockQuantity <= 5)
+        ? `<span class="stock-tag low-stock"><span class="material-symbols-outlined">warning</span> Low Stock: Only ${product.stockQuantity} left</span>`
+        : `<span class="stock-tag in-stock"><span class="material-symbols-outlined">check_circle</span> In Stock (${product.stockQuantity || 50} available)</span>`;
+
+    document.querySelector('#pageContent').innerHTML = `
+      <section class="page-width inner-page pdp-container">
+        <div class="pdp-breadcrumb">
+          <a href="index.html">Home</a> &rsaquo; <a href="pages.html?view=hampers">Hampers</a> &rsaquo; <span>${product.name}</span>
+        </div>
+        <div class="pdp-layout">
+          <div class="pdp-gallery">
+            <div class="main-image-wrap">
+              <img id="pdpMainImg" src="${product.image}" alt="${product.name}" onerror="this.src='https://lh3.googleusercontent.com/aida-public/AB6AXuCv99V82mbTkLCy_VYd6NxPxQ5kvPV3ckqvY6NRMfdOdoEXok6F0NtfZN_76HtgHFWSW4YAMqjZoIGlWXt_lGFci4gL1BuzvcfJucXy_7NhU_MN58Xo8iRtWskA7KvLwiOMJbLukB5FeEHh_Om18fC6qT8lxoR-c-kr49_EVc_hRTfjVzd-ychpySK41Sx0bHBBM-IP7eDSHfegeXuTBvhMg6Vgvw8GFALqfgHtYjct6aJLzzmM_witeg'" />
+              <span class="product-tag pdp-tag">${product.tag || 'Curated Keepsake'}</span>
+            </div>
+            <div class="pdp-trust-list">
+              <div><span class="material-symbols-outlined">verified</span>100% Transit-Safe Assurance</div>
+              <div><span class="material-symbols-outlined">card_giftcard</span>Complimentary Gold-foil Gift Card</div>
+              <div><span class="material-symbols-outlined">eco</span>Eco-friendly Reusable Box</div>
+            </div>
+          </div>
+          <div class="pdp-details">
+            <p class="eyebrow">${product.tag || 'Handcrafted Collection'}</p>
+            <h1>${product.name}</h1>
+            <div class="pdp-rating-row">
+              <span class="material-symbols-outlined">star</span> <strong>${product.rating || 4.9}</strong>
+              <span class="muted">(${product.reviews || 120} customer reviews)</span>
+              ${stockMsg}
+            </div>
+            <div class="pdp-price-box">
+              <strong class="pdp-price">₹${(product.price || 0).toLocaleString('en-IN')}</strong>
+              <del class="pdp-mrp">₹${(product.mrp || product.price + 400).toLocaleString('en-IN')}</del>
+              <span class="pdp-discount">SAVE ₹${((product.mrp || product.price + 400) - product.price).toLocaleString('en-IN')}</span>
+            </div>
+            <p class="pdp-desc">${product.description || 'Thoughtfully curated luxury gift hamper filled with handcrafted keepsakes, artisanal delicacies, and elegant presentation.'}</p>
+
+            <!-- PIN Code Delivery Checker Widget -->
+            <div class="pincode-checker-box">
+              <div class="pincode-header"><span class="material-symbols-outlined">local_shipping</span> <strong>Check Delivery Availability &amp; Date</strong></div>
+              <div class="pincode-input-row">
+                <input id="pincodeInput" type="text" maxlength="6" placeholder="Enter 6-digit PIN code (e.g. 400001)" />
+                <button type="button" id="btnCheckPincode" class="button button-dark small-btn">Check PIN</button>
+              </div>
+              <div id="pincodeResult" class="pincode-result"></div>
+            </div>
+
+            <!-- Item-Level Personalisation Box -->
+            <div class="pdp-personalisation-box">
+              <h3><span class="material-symbols-outlined">edit_note</span> Personalise This Hamper</h3>
+              <p class="small-copy">Add a handwritten message card &amp; ribbon style specifically for this box.</p>
+              <label>Gift Message Card (optional)
+                <textarea id="pdpMessage" rows="2" maxlength="300" placeholder="e.g. Happy Birthday! Wishing you joy and beautiful moments..."></textarea>
+              </label>
+              <div class="pdp-pers-grid">
+                <label>Silk Ribbon Color
+                  <select id="pdpRibbon">
+                    <option>Terracotta Raw Silk</option>
+                    <option>Forest Green Velvet</option>
+                    <option>Ivory Cotton</option>
+                    <option>Royal Gold Satin</option>
+                  </select>
+                </label>
+                <label>Gift Occasion
+                  <select id="pdpOccasion">
+                    <option>Birthday</option>
+                    <option>Anniversary</option>
+                    <option>Wedding</option>
+                    <option>Festive Celebration</option>
+                    <option>Corporate Milestone</option>
+                    <option>Just Because</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+
+            <div class="pdp-actions">
+              <div class="qty-selector">
+                <button type="button" id="pdpQtyDec">-</button>
+                <span id="pdpQtyVal">1</span>
+                <button type="button" id="pdpQtyInc">+</button>
+              </div>
+              <button id="pdpAddToCartBtn" class="button button-dark add-to-cart-lg" ${isOutOfStock ? 'disabled' : ''}>
+                <span class="material-symbols-outlined">shopping_bag</span> ${isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+
+    protectImages(document.querySelector('.pdp-container'));
+
+    // Pincode checker logic
+    document.querySelector('#btnCheckPincode')?.addEventListener('click', () => {
+      const pin = document.querySelector('#pincodeInput').value.trim();
+      const resEl = document.querySelector('#pincodeResult');
+      if (!/^\d{6}$/.test(pin)) {
+        resEl.className = 'pincode-result error';
+        resEl.innerHTML = '<span class="material-symbols-outlined">error</span> Please enter a valid 6-digit Indian PIN code.';
+        return;
+      }
+      if (pin.startsWith('400') || pin.startsWith('401') || pin.startsWith('410')) {
+        resEl.className = 'pincode-result success-fast';
+        resEl.innerHTML = '⚡ <strong>One-Day Express Delivery Available!</strong> Hand-delivered tomorrow evening by 7 PM.';
+      } else {
+        resEl.className = 'pincode-result success-std';
+        resEl.innerHTML = '🚚 <strong>Pan-India Air Express Delivery Available.</strong> Estimated delivery in 3 to 4 business days.';
+      }
+    });
+
+    // Quantity selector logic
+    let qty = 1;
+    const maxQty = product.stockQuantity !== undefined ? product.stockQuantity : 50;
+    document.querySelector('#pdpQtyInc')?.addEventListener('click', () => {
+      if (qty < maxQty) { qty++; document.querySelector('#pdpQtyVal').textContent = qty; }
+      else { showToast(`Only ${maxQty} hampers in stock`); }
+    });
+    document.querySelector('#pdpQtyDec')?.addEventListener('click', () => {
+      if (qty > 1) { qty--; document.querySelector('#pdpQtyVal').textContent = qty; }
+    });
+
+    // Add to cart logic
+    document.querySelector('#pdpAddToCartBtn')?.addEventListener('click', () => {
+      if (isOutOfStock) return;
+      const pers = {
+        message: document.querySelector('#pdpMessage').value.trim(),
+        ribbon: document.querySelector('#pdpRibbon').value,
+        occasion: document.querySelector('#pdpOccasion').value
+      };
+      api('/cart/items', {
+        method: 'POST',
+        body: JSON.stringify({ productId: product.id, quantity: qty, personalisation: pers })
+      }).then((cart) => {
+        updateCartBadge(cart);
+        showToast(`${product.name} added to your basket!`);
+      }).catch(err => showToast(err.message));
+    });
+  }).catch(err => {
+    document.querySelector('#pageContent').innerHTML = `<section class="page-width inner-page"><div class="no-results-card" style="text-align:center; padding:48px 24px;"><h2>Hamper not found.</h2><p>${err.message}</p><a class="button button-dark" href="pages.html?view=hampers">Back to Catalog</a></div></section>`;
+  });
+}
+
+function hydrateOrderTrackingPage(initialId = '') {
+  const container = document.querySelector('#trackResults');
+  const executeTrack = (id) => {
+    const cleanId = String(id || '').trim();
+    if (!cleanId) {
+      if (container) container.innerHTML = '<p class="muted" style="text-align:center;">Enter an Order ID above to check tracking progress.</p>';
+      return;
+    }
+    if (container) container.innerHTML = '<p class="muted" style="text-align:center;">Searching order database...</p>';
+
+    api(`/orders/${encodeURIComponent(cleanId)}`).then((order) => {
+      const statusMap = { confirmed: 1, packed: 2, dispatched: 3, delivered: 4, cancelled: 0 };
+      const currentStep = statusMap[order.status.toLowerCase()] || 1;
+      const isCancelled = order.status.toLowerCase() === 'cancelled';
+
+      container.innerHTML = `
+        <div class="tracking-card">
+          <div class="tracking-header">
+            <div>
+              <p class="eyebrow">Order ID: ${order.id}</p>
+              <h2>Status: <span class="status-badge ${order.status}">${order.status.toUpperCase()}</span></h2>
+              <small class="muted">Placed on ${new Date(order.createdAt).toLocaleDateString()} at ${new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
+            </div>
+            <div class="tracking-total">
+              <small>Total Amount</small>
+              <strong>₹${(order.total || 0).toLocaleString('en-IN')}</strong>
+            </div>
+          </div>
+
+          ${!isCancelled ? `
+          <div class="tracking-timeline">
+            <div class="timeline-step ${currentStep >= 1 ? 'completed' : ''}">
+              <div class="step-icon"><span class="material-symbols-outlined">check_circle</span></div>
+              <div class="step-label">Order Confirmed</div>
+            </div>
+            <div class="timeline-connector ${currentStep >= 2 ? 'active' : ''}"></div>
+            <div class="timeline-step ${currentStep >= 2 ? 'completed' : ''}">
+              <div class="step-icon"><span class="material-symbols-outlined">inventory_2</span></div>
+              <div class="step-label">Handcrafted &amp; Packed</div>
+            </div>
+            <div class="timeline-connector ${currentStep >= 3 ? 'active' : ''}"></div>
+            <div class="timeline-step ${currentStep >= 3 ? 'completed' : ''}">
+              <div class="step-icon"><span class="material-symbols-outlined">local_shipping</span></div>
+              <div class="step-label">Dispatched / Out for Delivery</div>
+            </div>
+            <div class="timeline-connector ${currentStep >= 4 ? 'active' : ''}"></div>
+            <div class="timeline-step ${currentStep >= 4 ? 'completed' : ''}">
+              <div class="step-icon"><span class="material-symbols-outlined">home</span></div>
+              <div class="step-label">Delivered</div>
+            </div>
+          </div>
+          ` : '<div class="cancelled-alert"><span class="material-symbols-outlined">cancel</span> This order was cancelled. Please contact concierge support if you need assistance.</div>'}
+
+          <div class="tracking-details-grid">
+            <div class="track-detail-col">
+              <h3>Recipient &amp; Delivery Address</h3>
+              <p><strong>${order.customer.name}</strong></p>
+              <p>📞 ${order.customer.phone}</p>
+              <p>📍 ${order.customer.address}</p>
+            </div>
+            <div class="track-detail-col">
+              <h3>Items Included (${(order.items || []).length})</h3>
+              ${(order.items || []).map(i => `
+                <div class="track-item-row">
+                  <div>
+                    <strong>${i.name} × ${i.quantity}</strong>
+                    ${i.personalisation?.message ? `<small class="track-pers-note">💌 Note: "${i.personalisation.message}" (${i.personalisation.ribbon || 'Ribbon'})</small>` : ''}
+                  </div>
+                  <b>₹${(i.lineTotal || 0).toLocaleString('en-IN')}</b>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }).catch(err => {
+      container.innerHTML = `<div class="no-results-card" style="text-align:center; padding:32px 16px;">
+        <span class="material-symbols-outlined" style="font-size:40px; color:#d9534f;">warning</span>
+        <h3>Order "${cleanId}" not found</h3>
+        <p class="muted">Please double check your Order ID from your confirmation screen.</p>
+      </div>`;
+    });
+  };
+
+  document.querySelector('#btnTrackOrder')?.addEventListener('click', () => {
+    executeTrack(document.querySelector('#trackOrderInput').value);
+  });
+  document.querySelector('#trackOrderInput')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') executeTrack(document.querySelector('#trackOrderInput').value);
+  });
+
+  if (initialId) executeTrack(initialId);
+}
+
+function applyCatalogSortAndFilter() {
+  const activeBudget = document.querySelector('.budget-btn.active')?.dataset.budget || 'all';
+  const sortVal = document.querySelector('#catalogSortSelect')?.value || 'featured';
+
+  document.querySelectorAll('.category-product-section').forEach((section) => {
+    const grid = section.querySelector('.product-grid');
+    if (!grid) return;
+    const cards = Array.from(grid.querySelectorAll('.product-card'));
+
+    cards.forEach((card) => {
+      const price = Number(card.dataset.price || 0);
+      let match = true;
+      if (activeBudget === 'under1000') match = price < 1000;
+      else if (activeBudget === '1000to2000') match = price >= 1000 && price <= 2000;
+      else if (activeBudget === 'above2000') match = price > 2000;
+
+      card.hidden = !match;
+    });
+
+    cards.sort((a, b) => {
+      const priceA = Number(a.dataset.price || 0);
+      const priceB = Number(b.dataset.price || 0);
+      const ratingA = Number(a.dataset.rating || 0);
+      const ratingB = Number(b.dataset.rating || 0);
+
+      if (sortVal === 'price-low') return priceA - priceB;
+      if (sortVal === 'price-high') return priceB - priceA;
+      if (sortVal === 'rating') return ratingB - ratingA;
+      return 0;
+    });
+
+    cards.forEach(card => grid.appendChild(card));
+  });
 }
 
 function hydrateCategoryCatalog() {
@@ -135,6 +465,20 @@ function hydrateCategoryCatalog() {
           }
         });
       });
+    });
+
+    // Bind Budget Filters
+    document.querySelectorAll('.budget-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.budget-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyCatalogSortAndFilter();
+      });
+    });
+
+    // Bind Sort Selector
+    document.querySelector('#catalogSortSelect')?.addEventListener('change', () => {
+      applyCatalogSortAndFilter();
     });
 
     // Check for active search query (from URL ?search= or input) and filter catalog
@@ -181,7 +525,7 @@ function hydrateCheckoutPage() {
       api('/orders', { method: 'POST', body: JSON.stringify({ customer, paymentMethod }) })
         .then(({ order }) => {
           showToast(`Order ${order.id} confirmed! Thank you.`);
-          setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+          setTimeout(() => { window.location.href = `pages.html?view=track&id=${order.id}`; }, 1000);
         })
         .catch((error) => showToast(error.message));
     });
@@ -190,13 +534,19 @@ function hydrateCheckoutPage() {
 
 function renderCartItems(cart) {
   if (!cart.items.length) return '<div class="empty-cart"><span class="material-symbols-outlined">shopping_bag</span><h2>Your basket is empty.</h2><p>Explore our hampers and add your favorites here.</p><a class="button button-dark" href="pages.html?view=hampers">Explore Hampers</a></div>';
-  return cart.items.map(({ product, quantity, lineTotal }) => `
+  return cart.items.map(({ product, quantity, lineTotal, personalisation }) => `
     <article class="cart-item" data-product-id="${product.id}">
-      <img src="${product.image}" alt="${product.name}" />
+      <img src="${product.image}" alt="${product.name}" onerror="this.src='https://lh3.googleusercontent.com/aida-public/AB6AXuCv99V82mbTkLCy_VYd6NxPxQ5kvPV3ckqvY6NRMfdOdoEXok6F0NtfZN_76HtgHFWSW4YAMqjZoIGlWXt_lGFci4gL1BuzvcfJucXy_7NhU_MN58Xo8iRtWskA7KvLwiOMJbLukB5FeEHh_Om18fC6qT8lxoR-c-kr49_EVc_hRTfjVzd-ychpySK41Sx0bHBBM-IP7eDSHfegeXuTBvhMg6Vgvw8GFALqfgHtYjct6aJLzzmM_witeg'" />
       <div>
         <span class="product-tag">${product.tag || 'Curated'}</span>
-        <h2>${product.name}</h2>
+        <h2><a href="pages.html?view=product&amp;product=${product.id}">${product.name}</a></h2>
         <p>${product.description || ''}</p>
+        ${personalisation && (personalisation.message || personalisation.ribbon) ? `
+          <div class="cart-item-pers">
+            <span>💌 Card: "${personalisation.message || 'No custom note'}"</span>
+            <span>🎀 Ribbon: ${personalisation.ribbon || 'Terracotta Raw Silk'} (${personalisation.occasion || 'General'})</span>
+          </div>
+        ` : ''}
         <div class="cart-controls">
           <button class="decrease" type="button">-</button>
           <strong>${quantity}</strong>
@@ -243,6 +593,7 @@ function bindCartActions() {
 function bindPageActions() {
   document.querySelectorAll('.add-button').forEach((button) => button.addEventListener('click', () => {
     const productId = button.dataset.productId;
+    if (button.disabled) return;
     api('/cart/items', { method: 'POST', body: JSON.stringify({ productId, quantity: 1 }) }).then((cart) => { updateCartBadge(cart); showToast('Added to your hamper'); }).catch((error) => showToast(error.message));
   }));
   document.querySelectorAll('.favorite').forEach((button) => button.addEventListener('click', () => {
@@ -304,7 +655,7 @@ function applyProductSearch(query) {
       <span class="material-symbols-outlined" style="font-size:48px; color:var(--copper); margin-bottom:12px;">search_off</span>
       <h3 style="font-family:var(--serif); font-size:22px; margin:0 0 8px;">No hampers found matching "${query}"</h3>
       <p style="color:var(--muted); font-size:12px; margin:0 0 20px;">Try searching for dry fruits, brass, candle, tea, chocolates, or birthday hampers.</p>
-      <button class="button button-dark" id="clearSearchBtn" style="font-size:11px;">View All 42 Hampers</button>
+      <button class="button button-dark" id="clearSearchBtn" style="font-size:11px;">View All Hampers</button>
     </div>`;
     document.querySelector('#clearSearchBtn')?.addEventListener('click', () => {
       if (searchInput) searchInput.value = '';

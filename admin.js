@@ -144,11 +144,19 @@ async function loadProducts() {
 function renderProductsTable(products) {
   const tbody = document.querySelector('#productsTableBody');
   if (!products.length) {
-    tbody.innerHTML = '<tr><td colspan="8" class="text-center muted">No products found. Click "Add New Hamper" to create one.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" class="text-center muted">No products found. Click "Add New Hamper" to create one.</td></tr>';
     return;
   }
 
-  tbody.innerHTML = products.map((p) => `
+  tbody.innerHTML = products.map((p) => {
+    const stockVal = p.stockQuantity !== undefined ? p.stockQuantity : (p.stock_quantity !== undefined ? p.stock_quantity : 50);
+    const stockPill = stockVal <= 0
+      ? '<span class="pill status-inactive" style="background:#ffebee; color:#c62828;">Out of Stock</span>'
+      : stockVal <= 5
+        ? `<span class="pill tag-pill" style="background:#fff8e1; color:#b78103;">Low Stock (${stockVal})</span>`
+        : `<span class="pill status-active">${stockVal} units</span>`;
+
+    return `
     <tr>
       <td>
         <div class="prod-cell">
@@ -163,6 +171,7 @@ function renderProductsTable(products) {
       <td><span class="pill tag-pill">${p.tag || 'Curated'}</span></td>
       <td><strong>₹${p.price.toLocaleString('en-IN')}</strong></td>
       <td><del class="muted">₹${p.mrp ? p.mrp.toLocaleString('en-IN') : '-'}</del></td>
+      <td>${stockPill}</td>
       <td>⭐ ${p.rating || 4.8} <small class="muted">(${p.reviews || 0})</small></td>
       <td>
         <button class="pill ${p.isActive ? 'status-active' : 'status-inactive'}" onclick="toggleProductActive('${p.id}', ${!p.isActive})" style="border:none; cursor:pointer;">
@@ -174,7 +183,7 @@ function renderProductsTable(products) {
         <button class="admin-btn danger-btn small-btn" onclick="deleteProduct('${p.id}')">Delete</button>
       </td>
     </tr>
-  `).join('');
+  `;}).join('');
 }
 
 document.querySelector('#productSearchInput')?.addEventListener('input', (e) => {
@@ -235,6 +244,7 @@ function openProductModal(productId = null) {
       document.querySelector('#modalProdTag').value = p.tag || '';
       document.querySelector('#modalProdPrice').value = p.price;
       document.querySelector('#modalProdMrp').value = p.mrp || '';
+      document.querySelector('#modalProdStock').value = p.stockQuantity !== undefined ? p.stockQuantity : (p.stock_quantity !== undefined ? p.stock_quantity : 50);
       document.querySelector('#modalProdImage').value = p.image;
       document.querySelector('#modalProdDesc').value = p.description || '';
       document.querySelector('#modalProdRating').value = p.rating || 4.8;
@@ -243,6 +253,7 @@ function openProductModal(productId = null) {
   } else {
     title.textContent = 'Add New Gift Hamper';
     document.querySelector('#modalProductId').value = '';
+    document.querySelector('#modalProdStock').value = 50;
   }
 
   modal.style.display = 'grid';
@@ -262,6 +273,7 @@ document.querySelector('#productForm')?.addEventListener('submit', async (e) => 
     tag: document.querySelector('#modalProdTag').value.trim(),
     price: Number(document.querySelector('#modalProdPrice').value),
     mrp: Number(document.querySelector('#modalProdMrp').value),
+    stockQuantity: Number(document.querySelector('#modalProdStock').value),
     image: document.querySelector('#modalProdImage').value.trim(),
     description: document.querySelector('#modalProdDesc').value.trim(),
     rating: Number(document.querySelector('#modalProdRating').value),
