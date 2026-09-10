@@ -391,8 +391,8 @@ app.post('/api/razorpay/webhook', express.raw({ type: 'application/json' }), asy
 
 app.post('/api/admin/login', rateLimit(10, 60000), express.json(), (request, response) => {
   const { username, password } = request.body || {};
-  const validUsername = process.env.ADMIN_USERNAME || 'admin';
-  const validPassword = process.env.ADMIN_PASSWORD || 'admin123';
+  const validUsername = process.env.ADMIN_USERNAME || 'Aryan gupta';
+  const validPassword = process.env.ADMIN_PASSWORD || 'aryan@surpriszo777';
 
   if (username === validUsername && password === validPassword) {
     const sessionToken = `spr_adm_${crypto.randomBytes(16).toString('hex')}`;
