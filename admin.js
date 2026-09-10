@@ -104,6 +104,10 @@ function switchTab(tabId) {
     settings: 'Store Banners & Announcements'
   };
   document.querySelector('#pageTitle').textContent = titles[tabId] || 'Dashboard';
+
+  if (tabId === 'custom-requests') {
+    loadCustomRequests();
+  }
 }
 
 document.querySelectorAll('.nav-tab').forEach((btn) => {
