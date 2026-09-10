@@ -818,9 +818,9 @@ async function loadStorefrontSettings() {
     if (annEl && settings.announcement_text) {
       annEl.innerHTML = `<span class="material-symbols-outlined">bolt</span> ${settings.announcement_text}`;
     }
-    const ribbonEl = document.querySelector('.delivery-ribbon span');
-    if (ribbonEl && settings.banner_shipping_text) {
-      ribbonEl.innerHTML = `<span class="material-symbols-outlined">local_shipping</span><strong>${settings.banner_shipping_text}</strong>`;
+    const ribbonEls = document.querySelectorAll('.delivery-ribbon span strong');
+    if (ribbonEls.length && settings.banner_shipping_text) {
+      ribbonEls.forEach(el => { el.textContent = settings.banner_shipping_text; });
     }
     const waLink = document.querySelector('.announcement-links a[href*="wa.me"]');
     if (waLink && settings.helpline_phone) {
