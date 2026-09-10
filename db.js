@@ -73,10 +73,13 @@ async function initDb() {
   await loadFallbackData();
 
   try {
+    const isSsl = process.env.DATABASE_SSL === 'true' || 
+                  connectionString.includes('sslmode=require') || 
+                  connectionString.includes('ssl=true');
     pool = new Pool({
       connectionString,
-      ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
-      connectionTimeoutMillis: 3000
+      ssl: isSsl ? { rejectUnauthorized: false } : false,
+      connectionTimeoutMillis: 5000
     });
 
     // Test query
