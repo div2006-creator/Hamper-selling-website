@@ -1147,91 +1147,170 @@ function applyCatalogSortAndFilter() {
   });
 }
 
+const fallbackCategories = [
+  {
+    id: "birthday",
+    name: "Birthday",
+    products: [
+      { id: "bday-1", name: "Confetti Celebration Box", price: 1299, mrp: 1699, tag: "Popular", image: "images/bday_hamper.png", description: "Gourmet confetti cookies, birthday sparklers, dark cacao bark and party popping candy.", rating: 4.9, reviews: 184 },
+      { id: "bday-2", name: "Birthday Brew & Truffles Box", price: 1499, mrp: 1899, tag: "Best Seller", image: "images/coffee_truffle_hamper.png", description: "Single-origin coffee, handcrafted belgian truffles, roasted almonds and ceramic mug.", rating: 4.8, reviews: 210 },
+      { id: "bday-3", name: "Velvet Milestone Birthday Edition", price: 2199, mrp: 2799, tag: "Signature", image: "images/macaron_sweet_hamper.png", description: "Gold-trimmed keepsake box, macarons, crystal champagne flutes and candle.", rating: 4.9, reviews: 142 }
+    ]
+  },
+  {
+    id: "anniversary",
+    name: "Anniversary",
+    products: [
+      { id: "anniv-1", name: "Eternal Romance Anniversary Trunk", price: 2499, mrp: 2999, tag: "Signature", image: "images/anniversary_romance_hamper.png", description: "Brass champagne flutes, hand-poured soy candle, rose chocolates, and gold foil card.", rating: 4.9, reviews: 156 },
+      { id: "anniv-2", name: "Botanical Tea & Honey Hamper", price: 1799, mrp: 2199, tag: "Luxury", image: "images/tea_botanical_hamper.png", description: "Organic chamomile tea, brass tea strainer, organic wild honey, and tea cup.", rating: 4.8, reviews: 92 }
+    ]
+  },
+  {
+    id: "wedding",
+    name: "Wedding",
+    products: [
+      { id: "wed-1", name: "Royal Heritage Celebration Hamper", price: 3899, mrp: 4499, tag: "Royal Edit", image: "images/wedding_royal_trunk.png", description: "Velvet keepsake trunk, royal dry fruits, brass diya set, and saffron sweets.", rating: 5.0, reviews: 320 },
+      { id: "wed-2", name: "Bridal Elegance Keepsake Box", price: 2999, mrp: 3499, tag: "Bridal Edit", image: "images/wed_bridal_elegance_box.png", description: "Bridal silk pouch, pearl bookmark, organic rose bath salts, and scented candle.", rating: 4.9, reviews: 110 }
+    ]
+  },
+  {
+    id: "festivals",
+    name: "Festivals",
+    products: [
+      { id: "fest-1", name: "Festive Golden Diwali Hamper", price: 1899, mrp: 2299, tag: "Festive Pick", image: "images/festive_diwali_hamper.png", description: "Artisanal brass thali, handmade brass diyas, organic dry fruits, and incense.", rating: 4.9, reviews: 240 },
+      { id: "fest-2", name: "Rakhi Memories Keepsake Hamper", price: 1599, mrp: 1999, tag: "Rakhi Special", image: "images/fest_rakhi_keepsake.png", description: "Handcrafted silver-plated rakhi, Kaju Katli box, rooli chawal set, and chocolates.", rating: 4.8, reviews: 175 }
+    ]
+  },
+  {
+    id: "corporate-gifting",
+    name: "Corporate Gifting",
+    products: [
+      { id: "corp-1", name: "Executive Leadership Gift Set", price: 2799, mrp: 3299, tag: "Corporate Bestseller", image: "images/corporate_executive_hamper.png", description: "Leather planner, Parker pen, thermal desk tumbler, roasted nuts, and gift box.", rating: 4.8, reviews: 190 }
+    ]
+  },
+  {
+    id: "for-her",
+    name: "For Her",
+    products: [
+      { id: "her-1", name: "Luxe Spa & Relaxation Gift Box", price: 2299, mrp: 2799, tag: "Pamper Edit", image: "images/her_spa_hamper_box.png", description: "Lavender bath salts, body butter, satin sleep mask, soy candle, and herbal tea.", rating: 4.9, reviews: 168 }
+    ]
+  },
+  {
+    id: "for-him",
+    name: "For Him",
+    products: [
+      { id: "him-1", name: "Gentleman's Grooming & Coffee Kit", price: 2199, mrp: 2699, tag: "Grooming Edit", image: "images/grooming_him_hamper.png", description: "Organic beard oil, charcoal face wash, cold brew coffee, and leather pouch.", rating: 4.8, reviews: 134 }
+    ]
+  }
+];
+
 function hydrateCategoryCatalog() {
+  const catalog = document.querySelector('#categoryCatalog');
+  if (!catalog) return;
+
   api('/categories').then((categories) => {
-    const catalog = document.querySelector('#categoryCatalog');
-    if (!catalog) return;
+    renderCategoriesList(categories && categories.length ? categories : fallbackCategories);
+  }).catch((error) => {
+    console.warn('API /categories fetch failed, rendering fallback catalog:', error.message);
+    renderCategoriesList(fallbackCategories);
+  });
+}
 
-    // Dynamically render Category Filter Bar pills
-    const filterBar = document.querySelector('#categoryFilterBar');
-    if (filterBar) {
-      const emojiMap = {
-        'birthday': '🎂',
-        'anniversary': '💍',
-        'wedding': '👑',
-        'festivals': '🪔',
-        'corporate-gifting': '💼',
-        'for-her': '🌹',
-        'for-him': '🎩'
-      };
-      let filterBtnsHtml = `<button class="cat-filter-btn active" data-filter="all">All Hampers</button>`;
-      categories.forEach(cat => {
-        const icon = emojiMap[cat.id] || '🎁';
-        filterBtnsHtml += `<button class="cat-filter-btn" data-filter="${cat.id}">${icon} ${cat.name}</button>`;
-      });
-      filterBar.innerHTML = filterBtnsHtml;
-    }
+function renderCategoriesList(categories) {
+  const catalog = document.querySelector('#categoryCatalog');
+  if (!catalog) return;
 
-    catalog.innerHTML = categories.map((category) => `
-      <section class="category-product-section" id="category-${category.id}">
-        <div class="category-heading">
-          <div><p class="eyebrow">${category.name}</p><h2>${category.name} Collection</h2></div>
-          <span>${(category.products || []).length} hampers</span>
-        </div>
-        <div class="product-grid page-product-grid">
-          ${(category.products || []).map(productCardFromObject).join('')}
-        </div>
-      </section>
-    `).join('');
-    protectImages(catalog);
-    bindPageActions();
+  // Dynamically render Category Filter Bar pills
+  const filterBar = document.querySelector('#categoryFilterBar');
+  if (filterBar) {
+    const emojiMap = {
+      'birthday': '🎂',
+      'anniversary': '💍',
+      'wedding': '👑',
+      'festivals': '🪔',
+      'corporate-gifting': '💼',
+      'for-her': '🌹',
+      'for-him': '🎩'
+    };
+    let filterBtnsHtml = `<button class="cat-filter-btn active" data-filter="all">All Hampers</button>`;
+    categories.forEach(cat => {
+      const icon = emojiMap[cat.id] || '🎁';
+      filterBtnsHtml += `<button class="cat-filter-btn" data-filter="${cat.id}">${icon} ${cat.name}</button>`;
+    });
+    filterBar.innerHTML = filterBtnsHtml;
+  }
 
-    // Bind Category Filter Buttons
-    document.querySelectorAll('#categoryFilterBar .cat-filter-btn').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('#categoryFilterBar .cat-filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const filter = btn.dataset.filter;
+  catalog.innerHTML = categories.map((category) => `
+    <section class="category-product-section" id="category-${category.id}">
+      <div class="category-heading">
+        <div><p class="eyebrow">${category.name}</p><h2>${category.name} Collection</h2></div>
+        <span>${(category.products || []).length} hampers</span>
+      </div>
+      <div class="product-grid page-product-grid">
+        ${(category.products || []).map(productCardFromObject).join('')}
+      </div>
+    </section>
+  `).join('');
+  protectImages(catalog);
+  bindPageActions();
 
-        const searchInput = document.querySelector('#pageSearch');
-        if (searchInput) searchInput.value = '';
-        const noResultsEl = document.querySelector('#searchNoResults');
-        if (noResultsEl) noResultsEl.remove();
+  // Bind Category Filter Buttons
+  document.querySelectorAll('#categoryFilterBar .cat-filter-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#categoryFilterBar .cat-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
 
-        document.querySelectorAll('.category-product-section').forEach((sec) => {
-          sec.querySelectorAll('.product-card').forEach(card => card.hidden = false);
-          if (filter === 'all') {
-            sec.style.display = 'block';
-          } else {
-            const secId = sec.id.replace('category-', '');
-            sec.style.display = secId === filter ? 'block' : 'none';
-          }
-        });
+      const searchInput = document.querySelector('#pageSearch');
+      if (searchInput) searchInput.value = '';
+      const noResultsEl = document.querySelector('#searchNoResults');
+      if (noResultsEl) noResultsEl.remove();
+
+      document.querySelectorAll('.category-product-section').forEach((sec) => {
+        sec.querySelectorAll('.product-card').forEach(card => card.hidden = false);
+        if (filter === 'all') {
+          sec.style.display = 'block';
+        } else {
+          const secId = sec.id.replace('category-', '');
+          sec.style.display = secId === filter ? 'block' : 'none';
+        }
       });
     });
+  });
 
-    // Bind Budget Filters
-    document.querySelectorAll('.budget-btn').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.budget-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        applyCatalogSortAndFilter();
-      });
-    });
-
-    // Bind Sort Selector
-    document.querySelector('#catalogSortSelect')?.addEventListener('change', () => {
+  // Bind Budget Filters
+  document.querySelectorAll('.budget-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.budget-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
       applyCatalogSortAndFilter();
     });
+  });
 
-    // Check for active search query (from URL ?search= or input) and filter catalog
-    const searchInput = document.querySelector('#pageSearch');
-    const urlQuery = new URLSearchParams(window.location.search).get('search') || '';
+  // Bind Sort Selector
+  document.querySelector('#catalogSortSelect')?.addEventListener('change', () => {
+    applyCatalogSortAndFilter();
+  });
+
+  // Check for active search or category/filter query parameter
+  const searchInput = document.querySelector('#pageSearch');
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlQuery = urlParams.get('search') || '';
+  const urlCategory = urlParams.get('category') || urlParams.get('filter') || '';
+  
+  if (urlCategory) {
+    const catBtn = document.querySelector(`#categoryFilterBar .cat-filter-btn[data-filter="${urlCategory}"]`);
+    if (catBtn) {
+      catBtn.click();
+    } else {
+      applyProductSearch(urlCategory);
+    }
+  } else {
     const activeQuery = (searchInput && searchInput.value.trim()) || urlQuery;
     if (activeQuery) {
       applyProductSearch(activeQuery);
     }
-  }).catch((error) => showToast(error.message));
+  }
 }
 
 function hydratePersonalisation() {
